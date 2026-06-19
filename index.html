@@ -14,11 +14,10 @@
   </head>
   <body>
     <main class="app">
-      <!-- HEADER: pet name + rename + settings (gear) -->
+      <!-- HEADER: pet name + settings (gear) -->
       <header class="header">
         <h1 id="petName">Your Pet</h1>
         <div class="header-actions">
-          <button id="renameBtn" class="ghost-btn" title="Rename your pet">rename</button>
           <button id="settingsBtn" class="ghost-btn" title="Settings" aria-label="Settings">⚙</button>
         </div>
       </header>
@@ -47,34 +46,41 @@
         </div>
       </section>
 
-      <!-- ADD TASK: the inputs + optional due date + the three difficulty buttons -->
-      <section class="add-task">
-        <input
-          id="taskInput"
-          type="text"
-          placeholder="What do you need to do?"
-          maxlength="120"
-        />
-        <textarea
-          id="descInput"
-          placeholder="Description (optional) — what needs to happen?"
-          rows="2"
-          maxlength="500"
-        ></textarea>
-        <input
-          id="linkInput"
-          type="url"
-          placeholder="Link (optional) — where to do it (https://…)"
-        />
-        <div class="due-row">
-          <label for="dueInput">Due (optional):</label>
-          <input id="dueInput" type="date" />
-          <button id="clearDue" type="button" class="ghost-btn small-ghost" title="Clear date">clear</button>
-        </div>
-        <div class="difficulty-row">
-          <button class="diff-btn normal" data-xp="5">+ Normal (5 XP)</button>
-          <button class="diff-btn medium" data-xp="10">+ Medium (10 XP)</button>
-          <button class="diff-btn hard" data-xp="20">+ Hard (20 XP)</button>
+      <!-- ADD TASK: collapsed by default. Click "+ Add new task" to expand. -->
+      <section class="add-task-wrap">
+        <button id="openAddTaskBtn" class="add-task-trigger">+ Add new task</button>
+        <div id="addTaskPanel" class="add-task hidden">
+          <input
+            id="taskInput"
+            class="app-input"
+            type="text"
+            placeholder="What do you need to do?"
+            maxlength="120"
+          />
+          <textarea
+            id="descInput"
+            class="app-input"
+            placeholder="Description (optional) — what needs to happen?"
+            rows="3"
+            maxlength="500"
+          ></textarea>
+          <input
+            id="linkInput"
+            class="app-input"
+            type="url"
+            placeholder="Link (optional) — where to do it (https://…)"
+          />
+          <div class="due-row">
+            <label for="dueInput">Due (optional):</label>
+            <input id="dueInput" type="date" />
+            <button id="clearDue" type="button" class="ghost-btn small-ghost" title="Clear date">clear</button>
+          </div>
+          <div class="difficulty-row">
+            <button class="diff-btn normal" data-xp="5">+ Normal (5 XP)</button>
+            <button class="diff-btn medium" data-xp="10">+ Medium (10 XP)</button>
+            <button class="diff-btn hard" data-xp="20">+ Hard (20 XP)</button>
+          </div>
+          <button id="cancelAddBtn" class="ghost-btn cancel-add">cancel</button>
         </div>
       </section>
 
@@ -105,6 +111,12 @@
       <div class="overlay-card settings-card">
         <button id="closeSettingsBtn" class="overlay-close" title="Close">×</button>
         <h2>Settings</h2>
+
+        <div class="settings-option">
+          <h3>Rename pet</h3>
+          <p>Give your pet a new name. Doesn't affect anything else.</p>
+          <button id="renamePetAction" class="primary-btn small">Rename</button>
+        </div>
 
         <div class="settings-option">
           <h3>Reset the pet</h3>

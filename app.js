@@ -814,13 +814,23 @@ function setBar(id, value) {
 // 9) WIRE UP — connect buttons + inputs to the functions above.
 // ============================================================
 
-// Helper: read every field in the add form and clear them after use.
+// ----- ADD-TASK FORM: expand / collapse / read / clear -----
+function openAddTask() {
+  document.getElementById("addTaskPanel").classList.remove("hidden");
+  document.getElementById("openAddTaskBtn").classList.add("hidden");
+  setTimeout(() => document.getElementById("taskInput").focus(), 0);
+}
+function closeAddTask() {
+  document.getElementById("addTaskPanel").classList.add("hidden");
+  document.getElementById("openAddTaskBtn").classList.remove("hidden");
+}
 function readAddForm() {
-  const text = document.getElementById("taskInput").value;
-  const due = document.getElementById("dueInput").value || null;
-  const description = document.getElementById("descInput").value;
-  const link = document.getElementById("linkInput").value;
-  return { text, due, description, link };
+  return {
+    text: document.getElementById("taskInput").value,
+    due: document.getElementById("dueInput").value || null,
+    description: document.getElementById("descInput").value,
+    link: document.getElementById("linkInput").value,
+  };
 }
 function clearAddForm() {
   document.getElementById("taskInput").value = "";
@@ -829,15 +839,22 @@ function clearAddForm() {
   document.getElementById("linkInput").value = "";
 }
 
+document.getElementById("openAddTaskBtn").addEventListener("click", openAddTask);
+document.getElementById("cancelAddBtn").addEventListener("click", () => {
+  clearAddForm();
+  closeAddTask();
+});
+
 document.querySelectorAll(".diff-btn").forEach(btn => {
   btn.addEventListener("click", () => {
     const f = readAddForm();
+    if (!f.text.trim()) return; // need a title
     const xp = parseInt(btn.dataset.xp, 10);
     const difficulty = btn.classList.contains("hard") ? "hard"
                      : btn.classList.contains("medium") ? "medium" : "normal";
     addTodo(f.text, xp, difficulty, f.due, f.description, f.link);
     clearAddForm();
-    document.getElementById("taskInput").focus();
+    closeAddTask();
   });
 });
 
@@ -846,16 +863,21 @@ document.getElementById("clearDue").addEventListener("click", () => {
 });
 
 // Pressing Enter in the title input = add as Medium (a sensible default).
-// Shift+Enter is allowed inside the description textarea for a new line.
+// (Enter in the description textarea makes a newline as expected.)
 document.getElementById("taskInput").addEventListener("keydown", (e) => {
   if (e.key === "Enter") {
     const f = readAddForm();
+    if (!f.text.trim()) return;
     addTodo(f.text, 10, "medium", f.due, f.description, f.link);
     clearAddForm();
+    closeAddTask();
   }
 });
 
-document.getElementById("renameBtn").addEventListener("click", promptForName);
+document.getElementById("renamePetAction").addEventListener("click", () => {
+  closeSettings();
+  promptForName();
+});
 document.getElementById("settingsBtn").addEventListener("click", openSettings);
 document.getElementById("closeSettingsBtn").addEventListener("click", closeSettings);
 document.getElementById("resetPetAction").addEventListener("click", resetPetOnly);

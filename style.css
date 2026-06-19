@@ -136,28 +136,74 @@ html, body {
 .meta strong { color: var(--text); }
 
 /* ----- ADD TASK ----- */
+.add-task-wrap { margin-bottom: 18px; }
+
+/* The "+ Add new task" trigger button shown when the form is collapsed */
+.add-task-trigger {
+  width: 100%;
+  background: var(--panel);
+  border: 1px dashed #3a2a5e;
+  color: var(--neon-purple);
+  font-family: inherit;
+  font-size: 15px;
+  font-weight: 600;
+  padding: 14px;
+  border-radius: 16px;
+  cursor: pointer;
+  letter-spacing: 0.5px;
+  transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+}
+.add-task-trigger:hover {
+  background: var(--panel-2);
+  border-color: var(--neon-purple);
+  color: var(--text);
+}
+
 .add-task {
   background: var(--panel);
   border-radius: 16px;
   padding: 14px;
-  margin-bottom: 18px;
 }
+.add-task.hidden { display: none; }
+
+/* Shared input styling — used by every text/textarea/url input across
+   the app. Keeps the look consistent everywhere. */
+.app-input,
 #taskInput, #descInput, #linkInput {
   width: 100%;
+  display: block;
   background: var(--panel-2);
   border: 1px solid #3a2a5e;
   color: var(--text);
   font-family: inherit;
   font-size: 14px;
+  line-height: 1.4;
   padding: 10px 12px;
   border-radius: 10px;
   outline: none;
-  margin-bottom: 8px;
+  margin-bottom: 10px;
   resize: vertical;
+  box-sizing: border-box;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+.app-input::placeholder,
+#taskInput::placeholder, #descInput::placeholder, #linkInput::placeholder {
+  color: var(--muted);
+  font-family: inherit;
 }
 #taskInput { font-size: 16px; padding: 12px 14px; }
-#taskInput:focus, #descInput:focus, #linkInput:focus { border-color: var(--neon-purple); }
-#descInput { min-height: 50px; }
+.app-input:focus,
+#taskInput:focus, #descInput:focus, #linkInput:focus {
+  border-color: var(--neon-purple);
+  box-shadow: 0 0 0 3px rgba(177, 75, 255, 0.18);
+}
+textarea.app-input { min-height: 60px; }
+
+/* Cancel button under the difficulty row */
+.cancel-add {
+  display: block;
+  margin: 12px auto 0;
+}
 
 .due-row {
   display: flex;
