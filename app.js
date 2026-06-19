@@ -844,10 +844,15 @@ saveState();
 render();
 
 // Keep the game ticking while the page is open.
+// IMPORTANT: while a task is being edited we still let time pass and save
+// state, but we DO NOT touch the DOM at all. Any DOM mutation
+// (even on a separate element) can cause the open native date picker to
+// close.
 setInterval(() => {
-  isTickRender = true;
   applyTimePassage();
   saveState();
+  if (editingId) return;
+  isTickRender = true;
   render();
   isTickRender = false;
 }, TICK_MS);
