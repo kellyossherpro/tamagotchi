@@ -596,6 +596,11 @@ function render() {
   renderBiscuit();
 
   // Todo list — split into active (not done) and done.
+  // If we're in the middle of an edit AND this is just the 1-second
+  // background tick (not a real user action), skip rebuilding the lists
+  // entirely. Rebuilding would tear down the open date picker.
+  if (editingId && isTickRender) return;
+
   const list = document.getElementById("todoList");
   const doneList = document.getElementById("doneList");
   list.innerHTML = "";
@@ -609,8 +614,6 @@ function render() {
     const li = document.createElement("li");
 
     // EDIT MODE — show input + due date + difficulty picker + save/cancel.
-    // Values come from editingDraft so the 1-second tick re-render doesn't
-    // wipe what you're typing or stop you from clicking the date picker.
     if (todo.id === editingId && !todo.done) {
       li.className = "todo-item editing";
       li.innerHTML = `
@@ -830,6 +833,11 @@ if (!state.pet.name) {
   promptForName();
 }
 
+// `isTickRender` distinguishes the background 1-second tick from a real
+// user action. While editing, the tick render skips rebuilding the todos
+// list so the date picker doesn't get torn down underneath the user.
+let isTickRender = false;
+
 // Apply any time that passed while the page was closed.
 applyTimePassage();
 saveState();
@@ -837,7 +845,9 @@ render();
 
 // Keep the game ticking while the page is open.
 setInterval(() => {
+  isTickRender = true;
   applyTimePassage();
   saveState();
   render();
+  isTickRender = false;
 }, TICK_MS);
