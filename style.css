@@ -83,13 +83,49 @@ html, body {
   align-items: center;
   justify-content: center;
   animation: bob 3s ease-in-out infinite;
+  cursor: pointer;
+  transform-origin: bottom center;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
 }
-.pet-stage svg { width: 100%; height: 100%; }
+.pet-stage svg { width: 100%; height: 100%; pointer-events: none; }
 
 /* gentle bobbing animation so the pet feels alive */
 @keyframes bob {
   0%, 100% { transform: translateY(0); }
   50%      { transform: translateY(-8px); }
+}
+
+/* JIGGLE — fired on click. Overrides the gentle bob for ~0.6s. */
+.pet-stage.wiggle {
+  animation: wiggle 0.55s cubic-bezier(.36,.07,.19,.97);
+}
+@keyframes wiggle {
+  0%   { transform: translateY(0) scale(1, 1) rotate(0); }
+  15%  { transform: translateY(-6px) scale(1.18, 0.82) rotate(-6deg); }
+  35%  { transform: translateY(2px) scale(0.88, 1.14) rotate(6deg); }
+  55%  { transform: translateY(-4px) scale(1.1, 0.92) rotate(-3deg); }
+  75%  { transform: translateY(0) scale(0.96, 1.04) rotate(2deg); }
+  100% { transform: translateY(0) scale(1, 1) rotate(0); }
+}
+
+/* FLOATING HEARTS — spawned on double-click. Each one drifts up + fades. */
+.float-heart {
+  position: absolute;
+  bottom: 38%;
+  font-size: 26px;
+  pointer-events: none;
+  transform: translateX(-50%);
+  animation: floatUp 1.5s ease-out forwards;
+  filter: drop-shadow(0 0 6px rgba(255, 79, 191, 0.5));
+}
+@keyframes floatUp {
+  0%   { transform: translate(-50%, 10px) scale(0.4) rotate(0); opacity: 0; }
+  18%  { transform: translate(-50%, -4px) scale(1.1) rotate(var(--rot)); opacity: 1; }
+  100% {
+    transform: translate(calc(-50% + var(--drift, 0px)), -120px) scale(0.8) rotate(var(--rot));
+    opacity: 0;
+  }
 }
 
 /* mood overlay = the little emoji shown over the pet when sad or asleep */

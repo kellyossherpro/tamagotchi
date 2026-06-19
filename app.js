@@ -563,16 +563,25 @@ const SVGS = {
 //    Called whenever something changes.
 // ============================================================
 
+// Track what we last drew for the pet so we don't reinject the SVG every
+// tick. That reinjection used to wipe in-flight wiggle/heart animations.
+let lastDrawnStageKey = "";
+
 function render() {
   // Pet name
   document.getElementById("petName").textContent = state.pet.name || "Your Pet";
 
-  // Pet SVG (or gravestone if dead)
+  // Pet SVG (or gravestone if dead) — only redraw when the stage or
+  // alive state actually changes.
   const petStage = document.getElementById("petStage");
-  if (!state.pet.alive) {
-    petStage.innerHTML = `<div style="font-size:120px">🪦</div>`;
-  } else {
-    petStage.innerHTML = SVGS[state.pet.stageIndex] || SVGS[0];
+  const stageKey = state.pet.alive ? `alive:${state.pet.stageIndex}` : "dead";
+  if (stageKey !== lastDrawnStageKey) {
+    if (!state.pet.alive) {
+      petStage.innerHTML = `<div style="font-size:120px">🪦</div>`;
+    } else {
+      petStage.innerHTML = SVGS[state.pet.stageIndex] || SVGS[0];
+    }
+    lastDrawnStageKey = stageKey;
   }
 
   // Mood overlay
@@ -877,6 +886,46 @@ document.getElementById("taskInput").addEventListener("keydown", (e) => {
 document.getElementById("renamePetAction").addEventListener("click", () => {
   closeSettings();
   promptForName();
+});
+
+// ----- PET INTERACTIVITY -----
+// Single click → cute jiggle. Double click → shower of hearts and kisses.
+const petStageEl = document.getElementById("petStage");
+const habitatEl = document.getElementById("habitat");
+
+function jigglePet() {
+  if (!state.pet.alive) return;
+  // Remove and re-add so the animation restarts cleanly if you spam-click.
+  petStageEl.classList.remove("wiggle");
+  // Force a reflow so the browser registers the class removal before re-add.
+  void petStageEl.offsetWidth;
+  petStageEl.classList.add("wiggle");
+  setTimeout(() => petStageEl.classList.remove("wiggle"), 600);
+}
+
+function showerHearts(count) {
+  if (!state.pet.alive) return;
+  const symbols = ["💖", "💕", "💋", "💗", "✨", "💞"];
+  for (let i = 0; i < count; i++) {
+    const el = document.createElement("span");
+    el.className = "float-heart";
+    el.textContent = symbols[Math.floor(Math.random() * symbols.length)];
+    const offsetX = (Math.random() - 0.5) * 120;       // -60px..+60px around centre
+    const drift = (Math.random() - 0.5) * 60;          // sideways drift while floating
+    const rot = (Math.random() - 0.5) * 40;            // little rotation
+    el.style.left = `calc(50% + ${offsetX}px)`;
+    el.style.setProperty("--drift", `${drift}px`);
+    el.style.setProperty("--rot", `${rot}deg`);
+    el.style.animationDelay = (i * 70) + "ms";
+    habitatEl.appendChild(el);
+    el.addEventListener("animationend", () => el.remove());
+  }
+}
+
+petStageEl.addEventListener("click", jigglePet);
+petStageEl.addEventListener("dblclick", () => {
+  jigglePet();             // extra-big jiggle for double-click too
+  showerHearts(7);
 });
 document.getElementById("settingsBtn").addEventListener("click", openSettings);
 document.getElementById("closeSettingsBtn").addEventListener("click", closeSettings);
