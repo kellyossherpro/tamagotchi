@@ -58,10 +58,24 @@
         </div>
       </section>
 
-      <!-- TODO LIST: app.js fills this in based on saved state -->
-      <section class="todos">
-        <ul id="todoList"></ul>
-        <p id="emptyMsg" class="empty">No tasks yet. Add one above to feed your pet.</p>
+      <!-- TASKS AREA: active list on the left, biscuit + completed list on the right -->
+      <section class="tasks-grid">
+        <div class="todos">
+          <h3 class="section-title">To do</h3>
+          <ul id="todoList"></ul>
+          <p id="emptyMsg" class="empty">No tasks yet. Add one above to feed your pet.</p>
+        </div>
+
+        <aside class="completed-pane">
+          <!-- The biscuit: starts greyscale, becomes colourful as XP fills toward next evolution -->
+          <div class="biscuit-wrap" title="Penny's biscuit. Fills with colour as you earn XP toward the next evolution.">
+            <div class="biscuit" id="biscuit"></div>
+            <p class="biscuit-caption" id="biscuitCaption">0 / 30 XP to Blob</p>
+          </div>
+          <h3 class="section-title">Done</h3>
+          <ul id="doneList"></ul>
+          <p id="doneEmptyMsg" class="empty small">Nothing finished yet.</p>
+        </aside>
       </section>
 
       <!-- FOOTER: reset button -->

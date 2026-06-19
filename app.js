@@ -30,6 +30,10 @@ const HUNGRY_SAD_MULTIPLIER = 1.5;
 const FEED_HUNGER = 20;
 const FEED_HAPPINESS = 15;
 
+// Big bonus feed when Penny eats the biscuit (i.e. an evolution fires)
+const BISCUIT_FEED_HUNGER = 40;
+const BISCUIT_FEED_HAPPINESS = 35;
+
 // How often the running game tick fires while the page is open (ms).
 // We update visuals once a second; actual decay math is time-based,
 // not tick-based, so this isn't a precision number.
@@ -62,6 +66,9 @@ function freshState() {
       survivedWeekdays: 0,        // how many weekdays counted as "survived"
       tasksDoneEver: 0,           // for the gravestone stat
       alive: true,
+      // The XP total at the last evolution. Used to draw the biscuit:
+      // progress toward next evolution = (xp - xpAtLastEvolution) / (nextThreshold - xpAtLastEvolution)
+      xpAtLastEvolution: 0,
     },
     todos: [],                    // list of { id, text, xp, difficulty, done }
     // Time bookkeeping:
@@ -168,11 +175,16 @@ function applyTimePassage() {
     state.pet.alive = false;
   }
 
-  // Check evolution (level up if BOTH thresholds met)
+  // Check evolution (level up if BOTH thresholds met).
+  // When evolution fires, Penny "eats the biscuit": big feed + happiness bonus,
+  // and we record the new XP baseline so the biscuit resets to greyscale.
   while (state.pet.stageIndex < STAGES.length - 1) {
     const next = STAGES[state.pet.stageIndex + 1];
     if (state.pet.survivedWeekdays >= next.daysNeeded && state.pet.xp >= next.xpNeeded) {
       state.pet.stageIndex += 1;
+      state.pet.hunger = Math.min(100, state.pet.hunger + BISCUIT_FEED_HUNGER);
+      state.pet.happiness = Math.min(100, state.pet.happiness + BISCUIT_FEED_HAPPINESS);
+      state.pet.xpAtLastEvolution = next.xpNeeded;
     } else {
       break;
     }
@@ -461,14 +473,25 @@ function render() {
   document.getElementById("xpLabel").textContent = Math.floor(state.pet.xp);
   document.getElementById("daysLabel").textContent = state.pet.survivedWeekdays;
 
-  // Todo list
+  // Biscuit — colour saturation reflects XP progress to next evolution.
+  renderBiscuit();
+
+  // Todo list — split into active (not done) and done.
   const list = document.getElementById("todoList");
+  const doneList = document.getElementById("doneList");
   list.innerHTML = "";
-  state.todos.forEach(todo => {
+  doneList.innerHTML = "";
+  const activeTodos = state.todos.filter(t => !t.done);
+  const doneTodos   = state.todos.filter(t => t.done);
+  // Render active todos in the main list; done todos in the side list.
+  activeTodos.concat(doneTodos).forEach(todo => {
+    // Which list does this row belong in?
+    const targetList = todo.done ? doneList : list;
     const li = document.createElement("li");
 
-    // EDIT MODE — show input + difficulty picker + save/cancel
-    if (todo.id === editingId) {
+    // EDIT MODE — show input + difficulty picker + save/cancel.
+    // Only active (not-done) tasks can be edited.
+    if (todo.id === editingId && !todo.done) {
       li.className = "todo-item editing";
       li.innerHTML = `
         <input type="text" class="edit-input" maxlength="120" />
@@ -505,17 +528,19 @@ function render() {
       });
       // Auto-focus the input so you can just start typing
       setTimeout(() => textInput.focus(), 0);
-      list.appendChild(li);
+      targetList.appendChild(li);
       return;
     }
 
     // NORMAL MODE
     li.className = "todo-item" + (todo.done ? " done" : "");
+    // Done tasks don't get an edit button (they're locked once completed).
+    const editBtn = todo.done ? "" : `<button class="edit" title="Edit">✎</button>`;
     li.innerHTML = `
       <input type="checkbox" ${todo.done ? "checked" : ""} />
       <span class="text"></span>
       <span class="xp-tag ${todo.difficulty}">${todo.xp} XP</span>
-      <button class="edit" title="Edit">✎</button>
+      ${editBtn}
       <button class="delete" title="Delete">×</button>
     `;
     li.querySelector(".text").textContent = todo.text;
@@ -523,12 +548,14 @@ function render() {
       if (e.target.checked) completeTask(todo);
       else uncompleteTask(todo);
     });
-    li.querySelector(".edit").addEventListener("click", () => startEdit(todo.id));
+    const editEl = li.querySelector(".edit");
+    if (editEl) editEl.addEventListener("click", () => startEdit(todo.id));
     li.querySelector(".delete").addEventListener("click", () => deleteTodo(todo.id));
-    list.appendChild(li);
+    targetList.appendChild(li);
   });
 
-  document.getElementById("emptyMsg").classList.toggle("hidden", state.todos.length > 0);
+  document.getElementById("emptyMsg").classList.toggle("hidden", activeTodos.length > 0);
+  document.getElementById("doneEmptyMsg").classList.toggle("hidden", doneTodos.length > 0);
 
   // Death overlay
   const overlay = document.getElementById("deathOverlay");
@@ -542,6 +569,60 @@ function render() {
   } else {
     overlay.classList.add("hidden");
   }
+}
+
+// ----- BISCUIT -----
+// A round chocolate-chip biscuit. We use one full-colour SVG and apply
+// a CSS grayscale filter that fades out as Penny earns XP toward her
+// next evolution. At 0% progress: black-and-white. At 100%: full colour.
+const BISCUIT_SVG = `
+  <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+    <!-- biscuit body -->
+    <circle cx="50" cy="50" r="42" fill="#d6a55a" stroke="#8a5a1f" stroke-width="2"/>
+    <circle cx="50" cy="50" r="42" fill="url(#crumbs)" opacity="0.5"/>
+    <defs>
+      <radialGradient id="crumbs">
+        <stop offset="0%" stop-color="#f0c47a"/>
+        <stop offset="100%" stop-color="#b8853d"/>
+      </radialGradient>
+    </defs>
+    <!-- chocolate chips -->
+    <ellipse cx="32" cy="35" rx="6" ry="5" fill="#4a2412"/>
+    <ellipse cx="62" cy="30" rx="5" ry="4" fill="#4a2412"/>
+    <ellipse cx="70" cy="58" rx="6" ry="5" fill="#4a2412"/>
+    <ellipse cx="40" cy="62" rx="5" ry="4" fill="#4a2412"/>
+    <ellipse cx="50" cy="48" rx="4" ry="3" fill="#4a2412"/>
+    <ellipse cx="28" cy="68" rx="4" ry="3" fill="#4a2412"/>
+    <!-- neon sprinkles -->
+    <rect x="55" y="42" width="6" height="2" rx="1" fill="#ff4fbf" transform="rotate(20 58 43)"/>
+    <rect x="20" y="50" width="6" height="2" rx="1" fill="#2ee6c8" transform="rotate(-30 23 51)"/>
+    <rect x="65" y="70" width="6" height="2" rx="1" fill="#b14bff" transform="rotate(45 68 71)"/>
+    <rect x="38" y="26" width="6" height="2" rx="1" fill="#ffd84a" transform="rotate(-15 41 27)"/>
+  </svg>`;
+
+function renderBiscuit() {
+  const el = document.getElementById("biscuit");
+  const caption = document.getElementById("biscuitCaption");
+  el.innerHTML = BISCUIT_SVG;
+
+  // Where are we in the journey to the next evolution?
+  const stageIdx = state.pet.stageIndex;
+  const isFinal = stageIdx >= STAGES.length - 1;
+
+  if (isFinal) {
+    el.style.filter = "grayscale(0%)";
+    caption.textContent = "Final form reached!";
+    return;
+  }
+  const next = STAGES[stageIdx + 1];
+  const base = state.pet.xpAtLastEvolution || 0;
+  const needed = next.xpNeeded - base;
+  const earned = Math.max(0, state.pet.xp - base);
+  const progress = needed > 0 ? Math.min(1, earned / needed) : 1;
+  // grayscale 100% (no XP) → 0% (full biscuit)
+  const gray = Math.round((1 - progress) * 100);
+  el.style.filter = `grayscale(${gray}%)`;
+  caption.textContent = `${Math.floor(earned)} / ${needed} XP to ${next.name}`;
 }
 
 function setBar(id, value) {
