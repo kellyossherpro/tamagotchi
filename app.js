@@ -399,23 +399,6 @@ function resetTasks() {
   render();
 }
 
-// Hatch / Evolve now — bumps Penny's XP and survived-weekday count to
-// exactly the next stage's thresholds, then runs the normal evolution
-// check so the biscuit-eat feed bonus still happens.
-function forceEvolveNow() {
-  if (state.pet.stageIndex >= STAGES.length - 1) {
-    alert("Penny is already at her final form (Big Cerberus)!");
-    return;
-  }
-  const next = STAGES[state.pet.stageIndex + 1];
-  state.pet.survivedWeekdays = Math.max(state.pet.survivedWeekdays, next.daysNeeded);
-  state.pet.xp = Math.max(state.pet.xp, next.xpNeeded);
-  applyTimePassage(); // performs the actual evolution + biscuit bonus
-  closeSettings();
-  saveState();
-  render();
-}
-
 // ----- SETTINGS OPEN/CLOSE -----
 function openSettings() {
   document.getElementById("settingsOverlay").classList.remove("hidden");
@@ -914,7 +897,6 @@ document.getElementById("renamePetAction").addEventListener("click", () => {
   closeSettings();
   promptForName();
 });
-document.getElementById("evolveNowAction").addEventListener("click", forceEvolveNow);
 
 // ----- PET INTERACTIVITY -----
 // Single click → cute jiggle. Double click → shower of hearts and kisses.
