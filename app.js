@@ -277,27 +277,71 @@ function reviveAsEgg() {
   render();
 }
 
-// Hard reset (the reset button at the bottom) — wipes everything.
-function fullReset() {
-  if (!confirm("Reset EVERYTHING — pet, todos, days, XP? This can't be undone.")) return;
-  state = freshState();
-  saveState();
-  promptForName();
-  render();
-}
+// ----- SETTINGS RESETS -----
+// All three reset options below show a confirm() with explicit text describing
+// exactly what will happen, so nothing is wiped by accident.
 
-// Soft pet-only reset: new egg, stats reset, but tasks are kept.
-// All existing tasks are re-armed (unchecked + awarded flag cleared) so
-// you can use them to feed the new pet.
+// Reset the pet: new egg, stats reset, days reset. Tasks are NOT touched.
 function resetPetOnly() {
-  if (!confirm("Reset Penny back to an egg? Your tasks stay. XP, hunger, happiness, and days survived will all reset.")) return;
-  const keptTodos = state.todos.map(t => ({ ...t, done: false, awarded: false }));
+  const ok = confirm(
+    "RESET THE PET\n\n" +
+    "Your pet will become a fresh egg.\n" +
+    "XP, days survived, hunger and happiness all reset to the start.\n" +
+    "Your tasks STAY exactly as they are (done tasks stay done).\n\n" +
+    "Continue?"
+  );
+  if (!ok) return;
+  const keptTodos = state.todos;
   const keptName = state.pet.name;
   state = freshState();
   state.todos = keptTodos;
   state.pet.name = keptName;
   saveState();
+  closeSettings();
   render();
+}
+
+// Reset XP: XP to 0, stage back to egg. Days/hunger/happiness kept.
+// Tasks are re-armed so they can be used to earn XP again.
+function resetXp() {
+  const ok = confirm(
+    "RESET XP\n\n" +
+    "XP goes back to 0 and the pet goes back to an egg.\n" +
+    "Days survived, hunger and happiness STAY where they are.\n" +
+    "All tasks will be unticked and re-armed so you can earn XP again.\n\n" +
+    "Continue?"
+  );
+  if (!ok) return;
+  state.pet.xp = 0;
+  state.pet.stageIndex = 0;
+  state.pet.xpAtLastEvolution = 0;
+  state.todos = state.todos.map(t => ({ ...t, done: false, awarded: false }));
+  saveState();
+  closeSettings();
+  render();
+}
+
+// Reset tasks: every task becomes unticked + awarded cleared. Pet untouched.
+function resetTasks() {
+  const ok = confirm(
+    "RESET ALL TASKS\n\n" +
+    "Every task will be unticked and re-armed for XP.\n" +
+    "The pet, its stats and its stage are NOT touched.\n\n" +
+    "Continue?"
+  );
+  if (!ok) return;
+  state.todos = state.todos.map(t => ({ ...t, done: false, awarded: false }));
+  saveState();
+  closeSettings();
+  render();
+}
+
+// ----- SETTINGS OPEN/CLOSE -----
+function openSettings() {
+  document.getElementById("settingsOverlay").classList.remove("hidden");
+}
+function closeSettings() {
+  document.getElementById("settingsOverlay").classList.add("hidden");
 }
 
 // ============================================================
@@ -676,8 +720,15 @@ document.getElementById("taskInput").addEventListener("keydown", (e) => {
 });
 
 document.getElementById("renameBtn").addEventListener("click", promptForName);
-document.getElementById("resetBtn").addEventListener("click", fullReset);
-document.getElementById("resetPetBtn").addEventListener("click", resetPetOnly);
+document.getElementById("settingsBtn").addEventListener("click", openSettings);
+document.getElementById("closeSettingsBtn").addEventListener("click", closeSettings);
+document.getElementById("resetPetAction").addEventListener("click", resetPetOnly);
+document.getElementById("resetXpAction").addEventListener("click", resetXp);
+document.getElementById("resetTasksAction").addEventListener("click", resetTasks);
+// Click outside the settings card to close.
+document.getElementById("settingsOverlay").addEventListener("click", (e) => {
+  if (e.target.id === "settingsOverlay") closeSettings();
+});
 document.getElementById("reviveBtn").addEventListener("click", reviveAsEgg);
 
 // ============================================================

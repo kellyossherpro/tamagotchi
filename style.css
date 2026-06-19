@@ -352,13 +352,53 @@ html, body {
 }
 .primary-btn:hover { filter: brightness(1.1); }
 
-.footer {
-  text-align: center;
-  margin-top: 30px;
+/* ----- HEADER ACTIONS (rename + settings cog) ----- */
+.header-actions {
   display: flex;
-  justify-content: center;
-  gap: 10px;
-  flex-wrap: wrap;
+  gap: 8px;
+}
+
+/* ----- SETTINGS OVERLAY ----- */
+.settings-card {
+  text-align: left;
+  max-width: 460px;
+  position: relative;
+}
+.settings-card h2 {
+  margin: 0 0 18px 0;
+  color: var(--neon-purple);
+  text-align: center;
+}
+.overlay-close {
+  position: absolute;
+  top: 10px;
+  right: 14px;
+  background: transparent;
+  border: none;
+  color: var(--muted);
+  font-size: 24px;
+  cursor: pointer;
+}
+.overlay-close:hover { color: var(--text); }
+.settings-option {
+  border-top: 1px solid #3a2a5e;
+  padding: 14px 0;
+}
+.settings-option:first-of-type { border-top: none; }
+.settings-option h3 {
+  margin: 0 0 6px 0;
+  font-size: 15px;
+  color: var(--text);
+}
+.settings-option p {
+  margin: 0 0 12px 0;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.5;
+}
+.primary-btn.small {
+  padding: 8px 14px;
+  font-size: 13px;
 }
 
 /* ----- DEATH OVERLAY ----- */

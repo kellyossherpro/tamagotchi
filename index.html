@@ -13,10 +13,13 @@
   </head>
   <body>
     <main class="app">
-      <!-- HEADER: pet name + a small rename button -->
+      <!-- HEADER: pet name + rename + settings (gear) -->
       <header class="header">
         <h1 id="petName">Your Pet</h1>
-        <button id="renameBtn" class="ghost-btn" title="Rename your pet">rename</button>
+        <div class="header-actions">
+          <button id="renameBtn" class="ghost-btn" title="Rename your pet">rename</button>
+          <button id="settingsBtn" class="ghost-btn" title="Settings" aria-label="Settings">⚙</button>
+        </div>
       </header>
 
       <!-- HABITAT: where the pet lives. The SVG inside gets swapped out by app.js
@@ -78,12 +81,43 @@
         </aside>
       </section>
 
-      <!-- FOOTER: reset buttons -->
-      <footer class="footer">
-        <button id="resetPetBtn" class="ghost-btn">reset Penny (keep tasks)</button>
-        <button id="resetBtn" class="ghost-btn danger">reset everything</button>
-      </footer>
     </main>
+
+    <!-- SETTINGS OVERLAY: hidden by default; opened by the gear button -->
+    <div id="settingsOverlay" class="overlay hidden">
+      <div class="overlay-card settings-card">
+        <button id="closeSettingsBtn" class="overlay-close" title="Close">×</button>
+        <h2>Settings</h2>
+
+        <div class="settings-option">
+          <h3>Reset the pet</h3>
+          <p>
+            Your pet becomes a fresh egg. XP, days survived, hunger and happiness
+            all reset to the start. <strong>Your tasks stay exactly as they are.</strong>
+          </p>
+          <button id="resetPetAction" class="primary-btn small">Reset pet</button>
+        </div>
+
+        <div class="settings-option">
+          <h3>Reset XP</h3>
+          <p>
+            XP goes back to 0 and the pet goes back to an egg. Days survived,
+            hunger and happiness stay. <strong>All tasks are unticked and re-armed</strong>
+            so you can use them to earn XP again.
+          </p>
+          <button id="resetXpAction" class="primary-btn small">Reset XP</button>
+        </div>
+
+        <div class="settings-option">
+          <h3>Reset all tasks to incomplete</h3>
+          <p>
+            Every task is unticked and re-armed for XP. <strong>The pet, its stats,
+            and its stage are not touched.</strong>
+          </p>
+          <button id="resetTasksAction" class="primary-btn small">Reset tasks</button>
+        </div>
+      </div>
+    </div>
 
     <!-- DEATH OVERLAY: hidden by default; shown when the pet dies -->
     <div id="deathOverlay" class="overlay hidden">
