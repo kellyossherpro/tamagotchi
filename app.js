@@ -286,6 +286,20 @@ function fullReset() {
   render();
 }
 
+// Soft pet-only reset: new egg, stats reset, but tasks are kept.
+// All existing tasks are re-armed (unchecked + awarded flag cleared) so
+// you can use them to feed the new pet.
+function resetPetOnly() {
+  if (!confirm("Reset Penny back to an egg? Your tasks stay. XP, hunger, happiness, and days survived will all reset.")) return;
+  const keptTodos = state.todos.map(t => ({ ...t, done: false, awarded: false }));
+  const keptName = state.pet.name;
+  state = freshState();
+  state.todos = keptTodos;
+  state.pet.name = keptName;
+  saveState();
+  render();
+}
+
 // ============================================================
 // 6) NAMING — ask for a name on first run, allow rename anytime.
 // ============================================================
@@ -663,6 +677,7 @@ document.getElementById("taskInput").addEventListener("keydown", (e) => {
 
 document.getElementById("renameBtn").addEventListener("click", promptForName);
 document.getElementById("resetBtn").addEventListener("click", fullReset);
+document.getElementById("resetPetBtn").addEventListener("click", resetPetOnly);
 document.getElementById("reviveBtn").addEventListener("click", reviveAsEgg);
 
 // ============================================================
