@@ -68,8 +68,8 @@ html, body {
   background: radial-gradient(ellipse at center, #2a1f47 0%, #15101e 80%);
   border: 1px solid #3a2a5e;
   border-radius: 20px;
-  padding: 24px;
-  height: 220px;
+  padding: 20px;
+  height: 200px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -78,8 +78,8 @@ html, body {
   overflow: hidden;
 }
 .pet-stage {
-  width: 160px;
-  height: 160px;
+  width: 150px;
+  height: 150px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -346,18 +346,29 @@ input[type="date"]::-webkit-calendar-picker-indicator:hover { opacity: 1; }
 .diff-btn.medium { background: var(--neon-yellow); }
 .diff-btn.hard   { background: var(--neon-pink); }
 
-/* ----- TASKS GRID: active list + completed pane (equal columns on wide screens) ----- */
-.tasks-grid {
+/* ----- MAIN 3-COLUMN GRID: Penny (left) | active tasks (middle) | done + biscuit (right) ----- */
+.main-grid {
   display: grid;
   grid-template-columns: 1fr;
   gap: 18px;
   margin-bottom: 20px;
 }
-@media (min-width: 720px) {
-  .tasks-grid {
-    grid-template-columns: 1fr 1fr;
+@media (min-width: 900px) {
+  .main-grid {
+    grid-template-columns: 320px 1fr 1fr;
+    align-items: start;
   }
 }
+.left-col {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+/* Inside the left column we don't need the bottom margins the children
+   had when they were stacked full-width — the column gap handles spacing. */
+.left-col .habitat,
+.left-col .stats,
+.left-col .add-task-wrap { margin-bottom: 0; }
 
 /* ----- PAGINATION CONTROLS ----- */
 .pager {

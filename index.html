@@ -22,31 +22,33 @@
         </div>
       </header>
 
-      <!-- HABITAT: where the pet lives. The SVG inside gets swapped out by app.js
-           depending on the pet's current stage and mood. -->
-      <section class="habitat" id="habitat">
-        <div class="pet-stage" id="petStage"></div>
-        <div class="mood-overlay" id="moodOverlay"></div>
-      </section>
+      <div class="main-grid">
+        <!-- LEFT COLUMN: Penny + stats + add-task -->
+        <section class="left-col">
+          <!-- HABITAT: where the pet lives. -->
+          <section class="habitat" id="habitat">
+            <div class="pet-stage" id="petStage"></div>
+            <div class="mood-overlay" id="moodOverlay"></div>
+          </section>
 
-      <!-- STATS: hunger, happiness, level/xp, days survived -->
-      <section class="stats">
-        <div class="stat">
-          <label>Hunger</label>
-          <div class="bar"><div class="bar-fill" id="hungerFill"></div></div>
-        </div>
-        <div class="stat">
-          <label>Happiness</label>
-          <div class="bar"><div class="bar-fill" id="happinessFill"></div></div>
-        </div>
-        <div class="meta">
-          <span>Stage: <strong id="stageLabel">Egg</strong></span>
-          <span>XP: <strong id="xpLabel">0</strong></span>
-          <span>Weekdays survived: <strong id="daysLabel">0</strong></span>
-        </div>
-      </section>
+          <!-- STATS: hunger, happiness, level/xp, days survived -->
+          <section class="stats">
+            <div class="stat">
+              <label>Hunger</label>
+              <div class="bar"><div class="bar-fill" id="hungerFill"></div></div>
+            </div>
+            <div class="stat">
+              <label>Happiness</label>
+              <div class="bar"><div class="bar-fill" id="happinessFill"></div></div>
+            </div>
+            <div class="meta">
+              <span>Stage: <strong id="stageLabel">Egg</strong></span>
+              <span>XP: <strong id="xpLabel">0</strong></span>
+              <span>Weekdays survived: <strong id="daysLabel">0</strong></span>
+            </div>
+          </section>
 
-      <!-- ADD TASK: collapsed by default. Click "+ Add new task" to expand. -->
+          <!-- ADD TASK: collapsed by default. Click "+ Add new task" to expand. -->
       <section class="add-task-wrap">
         <button id="openAddTaskBtn" class="add-task-trigger">+ Add new task</button>
         <div id="addTaskPanel" class="add-task hidden">
@@ -83,10 +85,10 @@
           <button id="cancelAddBtn" class="ghost-btn cancel-add">cancel</button>
         </div>
       </section>
+        </section>
 
-      <!-- TASKS AREA: active list on the left, biscuit + completed list on the right -->
-      <section class="tasks-grid">
-        <div class="todos">
+        <!-- MIDDLE COLUMN: active tasks -->
+        <section class="todos">
           <h3 class="section-title">To do</h3>
           <ul id="todoList"></ul>
           <p id="emptyMsg" class="empty">No tasks yet. Add one above to feed your pet.</p>
@@ -95,10 +97,10 @@
             <span class="page-info" id="activePageInfo">1 / 1</span>
             <button class="page-btn" id="activeNext" title="Next page">›</button>
           </div>
-        </div>
+        </section>
 
+        <!-- RIGHT COLUMN: biscuit + completed tasks -->
         <aside class="completed-pane">
-          <!-- The biscuit: starts greyscale, becomes colourful as XP fills toward next evolution -->
           <div class="biscuit-wrap" title="Penny's biscuit. Fills with colour as you earn XP toward the next evolution.">
             <div class="biscuit" id="biscuit"></div>
             <p class="biscuit-caption" id="biscuitCaption">0 / 30 XP to Blob</p>
@@ -112,7 +114,7 @@
             <button class="page-btn" id="doneNext" title="Next page">›</button>
           </div>
         </aside>
-      </section>
+      </div>
 
     </main>
 
