@@ -536,18 +536,21 @@ function render() {
     li.className = "todo-item" + (todo.done ? " done" : "");
     // Done tasks don't get an edit button (they're locked once completed).
     const editBtn = todo.done ? "" : `<button class="edit" title="Edit">✎</button>`;
+    // Done tasks have a permanently-checked, disabled checkbox — no take-backs.
+    const checkboxAttrs = todo.done ? `checked disabled` : ``;
     li.innerHTML = `
-      <input type="checkbox" ${todo.done ? "checked" : ""} />
+      <input type="checkbox" ${checkboxAttrs} />
       <span class="text"></span>
       <span class="xp-tag ${todo.difficulty}">${todo.xp} XP</span>
       ${editBtn}
       <button class="delete" title="Delete">×</button>
     `;
     li.querySelector(".text").textContent = todo.text;
-    li.querySelector("input").addEventListener("change", (e) => {
-      if (e.target.checked) completeTask(todo);
-      else uncompleteTask(todo);
-    });
+    if (!todo.done) {
+      li.querySelector("input").addEventListener("change", (e) => {
+        if (e.target.checked) completeTask(todo);
+      });
+    }
     const editEl = li.querySelector(".edit");
     if (editEl) editEl.addEventListener("click", () => startEdit(todo.id));
     li.querySelector(".delete").addEventListener("click", () => deleteTodo(todo.id));
