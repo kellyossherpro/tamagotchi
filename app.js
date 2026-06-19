@@ -223,6 +223,33 @@ function deleteTodo(id) {
   render();
 }
 
+// Editing state lives in memory only (not saved): which todo (if any) is
+// currently being edited. Null means nothing's being edited.
+let editingId = null;
+
+function startEdit(id) {
+  editingId = id;
+  render();
+}
+
+function cancelEdit() {
+  editingId = null;
+  render();
+}
+
+function saveEdit(id, newText, newXp, newDifficulty) {
+  const todo = state.todos.find(t => t.id === id);
+  if (!todo) return;
+  const trimmed = (newText || "").trim();
+  if (!trimmed) return; // ignore empty saves
+  todo.text = trimmed;
+  todo.xp = newXp;
+  todo.difficulty = newDifficulty;
+  editingId = null;
+  saveState();
+  render();
+}
+
 // Soft reset: new egg, todos preserved (we promised).
 function reviveAsEgg() {
   const oldTodos = state.todos;
@@ -439,11 +466,56 @@ function render() {
   list.innerHTML = "";
   state.todos.forEach(todo => {
     const li = document.createElement("li");
+
+    // EDIT MODE — show input + difficulty picker + save/cancel
+    if (todo.id === editingId) {
+      li.className = "todo-item editing";
+      li.innerHTML = `
+        <input type="text" class="edit-input" maxlength="120" />
+        <div class="edit-diff-row">
+          <button class="diff-mini normal" data-xp="5" data-diff="normal">5</button>
+          <button class="diff-mini medium" data-xp="10" data-diff="medium">10</button>
+          <button class="diff-mini hard" data-xp="20" data-diff="hard">20</button>
+        </div>
+        <button class="save-edit" title="Save">✓</button>
+        <button class="cancel-edit" title="Cancel">×</button>
+      `;
+      const textInput = li.querySelector(".edit-input");
+      textInput.value = todo.text;
+      // Track which difficulty is currently selected during the edit
+      let pickedXp = todo.xp;
+      let pickedDiff = todo.difficulty;
+      const diffBtns = li.querySelectorAll(".diff-mini");
+      const highlight = () => diffBtns.forEach(b =>
+        b.classList.toggle("active", b.dataset.diff === pickedDiff)
+      );
+      highlight();
+      diffBtns.forEach(b => b.addEventListener("click", () => {
+        pickedXp = parseInt(b.dataset.xp, 10);
+        pickedDiff = b.dataset.diff;
+        highlight();
+      }));
+      li.querySelector(".save-edit").addEventListener("click", () =>
+        saveEdit(todo.id, textInput.value, pickedXp, pickedDiff)
+      );
+      li.querySelector(".cancel-edit").addEventListener("click", cancelEdit);
+      textInput.addEventListener("keydown", (e) => {
+        if (e.key === "Enter") saveEdit(todo.id, textInput.value, pickedXp, pickedDiff);
+        if (e.key === "Escape") cancelEdit();
+      });
+      // Auto-focus the input so you can just start typing
+      setTimeout(() => textInput.focus(), 0);
+      list.appendChild(li);
+      return;
+    }
+
+    // NORMAL MODE
     li.className = "todo-item" + (todo.done ? " done" : "");
     li.innerHTML = `
       <input type="checkbox" ${todo.done ? "checked" : ""} />
       <span class="text"></span>
       <span class="xp-tag ${todo.difficulty}">${todo.xp} XP</span>
+      <button class="edit" title="Edit">✎</button>
       <button class="delete" title="Delete">×</button>
     `;
     li.querySelector(".text").textContent = todo.text;
@@ -451,6 +523,7 @@ function render() {
       if (e.target.checked) completeTask(todo);
       else uncompleteTask(todo);
     });
+    li.querySelector(".edit").addEventListener("click", () => startEdit(todo.id));
     li.querySelector(".delete").addEventListener("click", () => deleteTodo(todo.id));
     list.appendChild(li);
   });

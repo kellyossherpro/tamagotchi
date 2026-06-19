@@ -208,7 +208,8 @@ html, body {
 .todo-item .xp-tag.medium { background: var(--neon-yellow); }
 .todo-item .xp-tag.hard   { background: var(--neon-pink); }
 .todo-item.done .text { text-decoration: line-through; color: var(--muted); }
-.todo-item .delete {
+.todo-item .delete,
+.todo-item .edit {
   background: transparent;
   border: none;
   color: var(--muted);
@@ -216,6 +217,57 @@ html, body {
   font-size: 18px;
 }
 .todo-item .delete:hover { color: var(--bad); }
+.todo-item .edit:hover { color: var(--neon-purple); }
+
+/* ----- INLINE EDIT MODE ----- */
+.todo-item.editing {
+  flex-wrap: wrap;
+  background: var(--panel-2);
+  border: 1px solid var(--neon-purple);
+}
+.todo-item .edit-input {
+  flex: 1;
+  min-width: 160px;
+  background: var(--bg);
+  border: 1px solid #3a2a5e;
+  color: var(--text);
+  padding: 8px 10px;
+  border-radius: 8px;
+  font-size: 14px;
+  outline: none;
+}
+.todo-item .edit-input:focus { border-color: var(--neon-purple); }
+.todo-item .edit-diff-row {
+  display: flex;
+  gap: 4px;
+}
+.todo-item .diff-mini {
+  border: none;
+  border-radius: 6px;
+  padding: 6px 10px;
+  font-weight: 700;
+  font-size: 12px;
+  color: #110a1f;
+  cursor: pointer;
+  opacity: 0.45;
+  transition: opacity 0.15s ease;
+}
+.todo-item .diff-mini.active { opacity: 1; }
+.todo-item .diff-mini.normal { background: var(--neon-teal); }
+.todo-item .diff-mini.medium { background: var(--neon-yellow); }
+.todo-item .diff-mini.hard   { background: var(--neon-pink); }
+.todo-item .save-edit,
+.todo-item .cancel-edit {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-size: 18px;
+  padding: 4px 8px;
+}
+.todo-item .save-edit { color: var(--neon-teal); }
+.todo-item .cancel-edit { color: var(--muted); }
+.todo-item .save-edit:hover { filter: brightness(1.3); }
+.todo-item .cancel-edit:hover { color: var(--bad); }
 
 .empty {
   text-align: center;
