@@ -399,6 +399,23 @@ function resetTasks() {
   render();
 }
 
+// Hatch / Evolve now — bumps Penny's XP and survived-weekday count to
+// exactly the next stage's thresholds, then runs the normal evolution
+// check so the biscuit-eat feed bonus still happens.
+function forceEvolveNow() {
+  if (state.pet.stageIndex >= STAGES.length - 1) {
+    alert("Penny is already at her final form (Big Cerberus)!");
+    return;
+  }
+  const next = STAGES[state.pet.stageIndex + 1];
+  state.pet.survivedWeekdays = Math.max(state.pet.survivedWeekdays, next.daysNeeded);
+  state.pet.xp = Math.max(state.pet.xp, next.xpNeeded);
+  applyTimePassage(); // performs the actual evolution + biscuit bonus
+  closeSettings();
+  saveState();
+  render();
+}
+
 // ----- SETTINGS OPEN/CLOSE -----
 function openSettings() {
   document.getElementById("settingsOverlay").classList.remove("hidden");
@@ -576,12 +593,22 @@ function render() {
   const petStage = document.getElementById("petStage");
   const stageKey = state.pet.alive ? `alive:${state.pet.stageIndex}` : "dead";
   if (stageKey !== lastDrawnStageKey) {
+    // Detect whether this change is an evolution (alive -> bigger alive),
+    // as opposed to the first render after load, a revive, or a death.
+    const prev = lastDrawnStageKey;
+    const isEvolution =
+      prev.startsWith("alive:") &&
+      stageKey.startsWith("alive:") &&
+      parseInt(stageKey.slice(6), 10) > parseInt(prev.slice(6), 10);
+
     if (!state.pet.alive) {
       petStage.innerHTML = `<div style="font-size:120px">🪦</div>`;
     } else {
       petStage.innerHTML = SVGS[state.pet.stageIndex] || SVGS[0];
     }
     lastDrawnStageKey = stageKey;
+
+    if (isEvolution) playEvolutionAnimation();
   }
 
   // Mood overlay
@@ -887,6 +914,7 @@ document.getElementById("renamePetAction").addEventListener("click", () => {
   closeSettings();
   promptForName();
 });
+document.getElementById("evolveNowAction").addEventListener("click", forceEvolveNow);
 
 // ----- PET INTERACTIVITY -----
 // Single click → cute jiggle. Double click → shower of hearts and kisses.
@@ -905,21 +933,45 @@ function jigglePet() {
 
 function showerHearts(count) {
   if (!state.pet.alive) return;
-  const symbols = ["💖", "💕", "💋", "💗", "✨", "💞"];
+  spawnSymbols(["💖", "💕", "💋", "💗", "✨", "💞"], count);
+}
+
+// Bigger, longer-lasting shower for evolution celebrations.
+function showerSparkles(count) {
+  spawnSymbols(["✨", "🌟", "⭐", "💫", "🎉", "💖"], count, true);
+}
+
+function spawnSymbols(symbols, count, big) {
   for (let i = 0; i < count; i++) {
     const el = document.createElement("span");
-    el.className = "float-heart";
+    el.className = "float-heart" + (big ? " big" : "");
     el.textContent = symbols[Math.floor(Math.random() * symbols.length)];
-    const offsetX = (Math.random() - 0.5) * 120;       // -60px..+60px around centre
-    const drift = (Math.random() - 0.5) * 60;          // sideways drift while floating
-    const rot = (Math.random() - 0.5) * 40;            // little rotation
+    const offsetX = (Math.random() - 0.5) * (big ? 180 : 120);
+    const drift = (Math.random() - 0.5) * 60;
+    const rot = (Math.random() - 0.5) * 50;
     el.style.left = `calc(50% + ${offsetX}px)`;
     el.style.setProperty("--drift", `${drift}px`);
     el.style.setProperty("--rot", `${rot}deg`);
-    el.style.animationDelay = (i * 70) + "ms";
+    el.style.animationDelay = (i * (big ? 50 : 70)) + "ms";
     habitatEl.appendChild(el);
     el.addEventListener("animationend", () => el.remove());
   }
+}
+
+// Cinematic evolution animation: shake the pet, flash the habitat,
+// rain down sparkles. Called from render() the instant stage changes.
+function playEvolutionAnimation() {
+  petStageEl.classList.remove("evolving");
+  void petStageEl.offsetWidth;
+  petStageEl.classList.add("evolving");
+  setTimeout(() => petStageEl.classList.remove("evolving"), 1400);
+
+  habitatEl.classList.remove("flash");
+  void habitatEl.offsetWidth;
+  habitatEl.classList.add("flash");
+  setTimeout(() => habitatEl.classList.remove("flash"), 900);
+
+  showerSparkles(16);
 }
 
 petStageEl.addEventListener("click", jigglePet);

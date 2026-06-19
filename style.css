@@ -109,6 +109,43 @@ html, body {
   100% { transform: translateY(0) scale(1, 1) rotate(0); }
 }
 
+/* EVOLUTION — bigger, more dramatic version of the wiggle. */
+.pet-stage.evolving {
+  animation: hatchPop 1.4s cubic-bezier(.36,.07,.19,.97);
+  filter: drop-shadow(0 0 16px var(--neon-purple))
+          drop-shadow(0 0 32px var(--neon-pink));
+}
+@keyframes hatchPop {
+  0%   { transform: translateY(0) scale(1) rotate(0); }
+  10%  { transform: translateY(-2px) scale(1.1, 0.9) rotate(-10deg); }
+  20%  { transform: translateY(2px) scale(0.85, 1.15) rotate(10deg); }
+  32%  { transform: translateY(-2px) scale(1.15, 0.85) rotate(-12deg); }
+  44%  { transform: translateY(2px) scale(0.85, 1.15) rotate(12deg); }
+  55%  { transform: translateY(-8px) scale(1.5, 1.5) rotate(0); opacity: 0.8; }
+  70%  { transform: translateY(-4px) scale(1.2, 1.2) rotate(0); opacity: 1; }
+  85%  { transform: translateY(0) scale(0.95, 1.05) rotate(0); }
+  100% { transform: translateY(0) scale(1, 1) rotate(0); }
+}
+
+/* Habitat-wide flash that goes with the evolution pop. */
+.habitat.flash::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at center,
+              rgba(255, 255, 255, 0.6) 0%,
+              rgba(177, 75, 255, 0.4) 30%,
+              rgba(255, 79, 191, 0) 70%);
+  pointer-events: none;
+  animation: flashOnce 0.9s ease-out forwards;
+  border-radius: 20px;
+}
+@keyframes flashOnce {
+  0%   { opacity: 0; }
+  20%  { opacity: 1; }
+  100% { opacity: 0; }
+}
+
 /* FLOATING HEARTS — spawned on double-click. Each one drifts up + fades. */
 .float-heart {
   position: absolute;
@@ -118,6 +155,11 @@ html, body {
   transform: translateX(-50%);
   animation: floatUp 1.5s ease-out forwards;
   filter: drop-shadow(0 0 6px rgba(255, 79, 191, 0.5));
+}
+.float-heart.big {
+  font-size: 36px;
+  animation: floatUp 2.2s ease-out forwards;
+  filter: drop-shadow(0 0 10px rgba(177, 75, 255, 0.8));
 }
 @keyframes floatUp {
   0%   { transform: translate(-50%, 10px) scale(0.4) rotate(0); opacity: 0; }
