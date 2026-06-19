@@ -35,12 +35,13 @@ html, body {
   min-height: 100vh;
 }
 
-/* main container — centered card on screen.
-   Wider now so the biscuit/done list can sit beside the active list on desktop. */
+/* main container — fills most of the screen so everything stays in view
+   without scrolling. Caps wide enough for big monitors but not ridiculous. */
 .app {
-  max-width: 880px;
+  width: 95vw;
+  max-width: 1400px;
   margin: 0 auto;
-  padding: 24px 20px 60px;
+  padding: 20px 20px 40px;
 }
 
 /* ----- HEADER ----- */
@@ -345,7 +346,7 @@ input[type="date"]::-webkit-calendar-picker-indicator:hover { opacity: 1; }
 .diff-btn.medium { background: var(--neon-yellow); }
 .diff-btn.hard   { background: var(--neon-pink); }
 
-/* ----- TASKS GRID: active list + side completed pane ----- */
+/* ----- TASKS GRID: active list + completed pane (equal columns on wide screens) ----- */
 .tasks-grid {
   display: grid;
   grid-template-columns: 1fr;
@@ -354,9 +355,40 @@ input[type="date"]::-webkit-calendar-picker-indicator:hover { opacity: 1; }
 }
 @media (min-width: 720px) {
   .tasks-grid {
-    grid-template-columns: 1fr 240px;
+    grid-template-columns: 1fr 1fr;
   }
 }
+
+/* ----- PAGINATION CONTROLS ----- */
+.pager {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 10px;
+  font-size: 12px;
+  color: var(--muted);
+}
+.pager.hidden { display: none; }
+.page-btn {
+  background: var(--panel-2);
+  border: 1px solid #3a2a5e;
+  color: var(--neon-purple);
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  font-size: 16px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+.page-btn:hover:not(:disabled) {
+  background: var(--panel);
+  border-color: var(--neon-purple);
+}
+.page-btn:disabled { opacity: 0.3; cursor: default; }
 .section-title {
   margin: 0 0 8px 0;
   font-size: 12px;

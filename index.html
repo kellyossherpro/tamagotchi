@@ -90,6 +90,11 @@
           <h3 class="section-title">To do</h3>
           <ul id="todoList"></ul>
           <p id="emptyMsg" class="empty">No tasks yet. Add one above to feed your pet.</p>
+          <div class="pager hidden" id="activePager">
+            <button class="page-btn" id="activePrev" title="Previous page">‹</button>
+            <span class="page-info" id="activePageInfo">1 / 1</span>
+            <button class="page-btn" id="activeNext" title="Next page">›</button>
+          </div>
         </div>
 
         <aside class="completed-pane">
@@ -101,6 +106,11 @@
           <h3 class="section-title">Done</h3>
           <ul id="doneList"></ul>
           <p id="doneEmptyMsg" class="empty small">Nothing finished yet.</p>
+          <div class="pager hidden" id="donePager">
+            <button class="page-btn" id="donePrev" title="Previous page">‹</button>
+            <span class="page-info" id="donePageInfo">1 / 1</span>
+            <button class="page-btn" id="doneNext" title="Next page">›</button>
+          </div>
         </aside>
       </section>
 

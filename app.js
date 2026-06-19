@@ -273,6 +273,22 @@ function deleteTodo(id) {
   render();
 }
 
+// ----- PAGINATION -----
+// How many tasks per page in each list. Kept small so the whole app fits
+// on a laptop screen without scrolling.
+const PAGE_SIZE = 5;
+// In-memory only — paging doesn't need to survive a reload.
+let activePage = 0;
+let donePage = 0;
+
+function updatePager(wrapId, prevId, nextId, infoId, page, totalPages) {
+  const wrap = document.getElementById(wrapId);
+  wrap.classList.toggle("hidden", totalPages <= 1);
+  document.getElementById(infoId).textContent = `${page + 1} / ${totalPages}`;
+  document.getElementById(prevId).disabled = page <= 0;
+  document.getElementById(nextId).disabled = page >= totalPages - 1;
+}
+
 // Editing state lives in memory only (not saved):
 // - editingId: which todo (if any) is currently being edited (null = none)
 // - editingDraft: the in-progress values being typed; survives re-renders so
@@ -630,8 +646,21 @@ function render() {
   const doneList = document.getElementById("doneList");
   list.innerHTML = "";
   doneList.innerHTML = "";
-  const activeTodos = state.todos.filter(t => !t.done);
-  const doneTodos   = state.todos.filter(t => t.done);
+  const allActive = state.todos.filter(t => !t.done);
+  const allDone   = state.todos.filter(t => t.done);
+
+  // Pagination: clamp pages to valid range, then slice for rendering.
+  const activePages = Math.max(1, Math.ceil(allActive.length / PAGE_SIZE));
+  const donePages   = Math.max(1, Math.ceil(allDone.length   / PAGE_SIZE));
+  activePage = Math.min(activePage, activePages - 1);
+  donePage   = Math.min(donePage,   donePages   - 1);
+  const activeTodos = allActive.slice(activePage * PAGE_SIZE, (activePage + 1) * PAGE_SIZE);
+  const doneTodos   = allDone.slice(donePage   * PAGE_SIZE, (donePage   + 1) * PAGE_SIZE);
+
+  // Render the pager controls (or hide them if only one page).
+  updatePager("activePager", "activePrev", "activeNext", "activePageInfo", activePage, activePages);
+  updatePager("donePager",   "donePrev",   "doneNext",   "donePageInfo",   donePage,   donePages);
+
   // Render active todos in the main list; done todos in the side list.
   activeTodos.concat(doneTodos).forEach(todo => {
     // Which list does this row belong in?
@@ -750,8 +779,8 @@ function render() {
     targetList.appendChild(li);
   });
 
-  document.getElementById("emptyMsg").classList.toggle("hidden", activeTodos.length > 0);
-  document.getElementById("doneEmptyMsg").classList.toggle("hidden", doneTodos.length > 0);
+  document.getElementById("emptyMsg").classList.toggle("hidden", allActive.length > 0);
+  document.getElementById("doneEmptyMsg").classList.toggle("hidden", allDone.length > 0);
 
   // Death overlay
   const overlay = document.getElementById("deathOverlay");
@@ -955,6 +984,12 @@ function playEvolutionAnimation() {
 
   showerSparkles(16);
 }
+
+// ----- PAGINATION BUTTON WIRING -----
+document.getElementById("activePrev").addEventListener("click", () => { activePage = Math.max(0, activePage - 1); render(); });
+document.getElementById("activeNext").addEventListener("click", () => { activePage = activePage + 1; render(); });
+document.getElementById("donePrev").addEventListener("click",   () => { donePage   = Math.max(0, donePage   - 1); render(); });
+document.getElementById("doneNext").addEventListener("click",   () => { donePage   = donePage   + 1; render(); });
 
 petStageEl.addEventListener("click", jigglePet);
 petStageEl.addEventListener("dblclick", () => {
