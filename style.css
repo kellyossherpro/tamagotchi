@@ -1,0 +1,292 @@
+/*
+  style.css — the LOOK of the page.
+  Colors, sizes, spacing, animations live here.
+  Vibe: dark cozy background, bright neon accents (synthwave-y).
+*/
+
+/* ----- COLOR PALETTE -----
+   Keeping all our colors in CSS variables at the top so they're easy
+   to change later. Want a different theme? Tweak these. */
+:root {
+  --bg: #15101e;          /* dark cozy background */
+  --panel: #1f1733;       /* slightly lighter panel */
+  --panel-2: #2a1f47;     /* even lighter for inputs */
+  --text: #f3e9ff;        /* near-white, slightly purple */
+  --muted: #9a8cb8;       /* dim text for less important stuff */
+
+  --neon-purple: #b14bff; /* main accent */
+  --neon-teal: #2ee6c8;   /* bars + highlights */
+  --neon-pink: #ff4fbf;   /* hard difficulty / danger */
+  --neon-yellow: #ffd84a; /* medium difficulty / warning */
+
+  --good: #2ee6c8;        /* full bar */
+  --okay: #ffd84a;        /* mid bar */
+  --bad: #ff4f6d;         /* low bar */
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: "Inter", "Segoe UI", system-ui, sans-serif;
+  min-height: 100vh;
+}
+
+/* main container — centered card on screen */
+.app {
+  max-width: 560px;
+  margin: 0 auto;
+  padding: 24px 20px 60px;
+}
+
+/* ----- HEADER ----- */
+.header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 18px;
+}
+.header h1 {
+  margin: 0;
+  font-size: 28px;
+  letter-spacing: 0.5px;
+  background: linear-gradient(90deg, var(--neon-purple), var(--neon-pink));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* ----- HABITAT (where the pet lives) ----- */
+.habitat {
+  position: relative;
+  background: radial-gradient(ellipse at center, #2a1f47 0%, #15101e 80%);
+  border: 1px solid #3a2a5e;
+  border-radius: 20px;
+  padding: 24px;
+  height: 220px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 0 40px rgba(177, 75, 255, 0.15) inset;
+  margin-bottom: 18px;
+  overflow: hidden;
+}
+.pet-stage {
+  width: 160px;
+  height: 160px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: bob 3s ease-in-out infinite;
+}
+.pet-stage svg { width: 100%; height: 100%; }
+
+/* gentle bobbing animation so the pet feels alive */
+@keyframes bob {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-8px); }
+}
+
+/* mood overlay = the little emoji shown over the pet when sad or asleep */
+.mood-overlay {
+  position: absolute;
+  top: 14px;
+  right: 18px;
+  font-size: 32px;
+  filter: drop-shadow(0 0 8px rgba(0,0,0,0.6));
+}
+
+/* ----- STATS BARS ----- */
+.stats { margin-bottom: 20px; }
+.stat { margin-bottom: 10px; }
+.stat label {
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  color: var(--muted);
+}
+.bar {
+  background: var(--panel-2);
+  border-radius: 999px;
+  height: 14px;
+  overflow: hidden;
+  margin-top: 4px;
+}
+.bar-fill {
+  height: 100%;
+  width: 100%;
+  background: var(--good);
+  transition: width 0.4s ease, background 0.4s ease;
+  box-shadow: 0 0 12px currentColor;
+}
+
+.meta {
+  display: flex;
+  gap: 14px;
+  flex-wrap: wrap;
+  font-size: 13px;
+  color: var(--muted);
+  margin-top: 10px;
+}
+.meta strong { color: var(--text); }
+
+/* ----- ADD TASK ----- */
+.add-task {
+  background: var(--panel);
+  border-radius: 16px;
+  padding: 14px;
+  margin-bottom: 18px;
+}
+#taskInput {
+  width: 100%;
+  background: var(--panel-2);
+  border: 1px solid #3a2a5e;
+  color: var(--text);
+  font-size: 16px;
+  padding: 12px 14px;
+  border-radius: 10px;
+  outline: none;
+}
+#taskInput:focus { border-color: var(--neon-purple); }
+
+.difficulty-row {
+  display: flex;
+  gap: 8px;
+  margin-top: 10px;
+  flex-wrap: wrap;
+}
+.diff-btn {
+  flex: 1;
+  min-width: 100px;
+  border: none;
+  border-radius: 10px;
+  padding: 10px 12px;
+  font-weight: 600;
+  color: #110a1f;
+  cursor: pointer;
+  transition: transform 0.1s ease, filter 0.2s ease;
+}
+.diff-btn:hover { filter: brightness(1.1); }
+.diff-btn:active { transform: scale(0.97); }
+.diff-btn.normal { background: var(--neon-teal); }
+.diff-btn.medium { background: var(--neon-yellow); }
+.diff-btn.hard   { background: var(--neon-pink); }
+
+/* ----- TODO LIST ----- */
+.todos ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.todo-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--panel);
+  border-radius: 12px;
+  padding: 10px 12px;
+  margin-bottom: 8px;
+}
+.todo-item input[type="checkbox"] {
+  width: 20px; height: 20px;
+  accent-color: var(--neon-purple);
+  cursor: pointer;
+}
+.todo-item .text { flex: 1; }
+.todo-item .xp-tag {
+  font-size: 12px;
+  padding: 3px 8px;
+  border-radius: 999px;
+  color: #110a1f;
+  font-weight: 700;
+}
+.todo-item .xp-tag.normal { background: var(--neon-teal); }
+.todo-item .xp-tag.medium { background: var(--neon-yellow); }
+.todo-item .xp-tag.hard   { background: var(--neon-pink); }
+.todo-item.done .text { text-decoration: line-through; color: var(--muted); }
+.todo-item .delete {
+  background: transparent;
+  border: none;
+  color: var(--muted);
+  cursor: pointer;
+  font-size: 18px;
+}
+.todo-item .delete:hover { color: var(--bad); }
+
+.empty {
+  text-align: center;
+  color: var(--muted);
+  font-style: italic;
+  margin: 16px 0;
+}
+.empty.hidden { display: none; }
+
+/* ----- BUTTONS ----- */
+.ghost-btn {
+  background: transparent;
+  border: 1px solid #3a2a5e;
+  color: var(--muted);
+  padding: 6px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 12px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+.ghost-btn:hover { color: var(--text); border-color: var(--neon-purple); }
+.ghost-btn.danger:hover { color: var(--bad); border-color: var(--bad); }
+
+.primary-btn {
+  background: linear-gradient(90deg, var(--neon-purple), var(--neon-pink));
+  color: white;
+  border: none;
+  padding: 12px 20px;
+  font-size: 15px;
+  font-weight: 600;
+  border-radius: 10px;
+  cursor: pointer;
+  box-shadow: 0 0 20px rgba(177, 75, 255, 0.5);
+}
+.primary-btn:hover { filter: brightness(1.1); }
+
+.footer {
+  text-align: center;
+  margin-top: 30px;
+}
+
+/* ----- DEATH OVERLAY ----- */
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.85);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+}
+.overlay.hidden { display: none; }
+.overlay-card {
+  background: var(--panel);
+  border-radius: 20px;
+  padding: 32px 28px;
+  text-align: center;
+  max-width: 380px;
+  border: 1px solid #3a2a5e;
+}
+.gravestone {
+  font-size: 64px;
+  margin-bottom: 8px;
+}
+.overlay-card h2 {
+  margin: 0 0 10px 0;
+  color: var(--neon-pink);
+}
+.overlay-card p {
+  color: var(--muted);
+  white-space: pre-line;
+  margin-bottom: 20px;
+}

@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<!--
+  index.html — the STRUCTURE of the page.
+  Think of this file as the skeleton: it says what's on the page,
+  but not how it looks (that's style.css) or how it behaves (that's app.js).
+-->
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Cerberus Tamagotchi</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <main class="app">
+      <!-- HEADER: pet name + a small rename button -->
+      <header class="header">
+        <h1 id="petName">Your Pet</h1>
+        <button id="renameBtn" class="ghost-btn" title="Rename your pet">rename</button>
+      </header>
+
+      <!-- HABITAT: where the pet lives. The SVG inside gets swapped out by app.js
+           depending on the pet's current stage and mood. -->
+      <section class="habitat" id="habitat">
+        <div class="pet-stage" id="petStage"></div>
+        <div class="mood-overlay" id="moodOverlay"></div>
+      </section>
+
+      <!-- STATS: hunger, happiness, level/xp, days survived -->
+      <section class="stats">
+        <div class="stat">
+          <label>Hunger</label>
+          <div class="bar"><div class="bar-fill" id="hungerFill"></div></div>
+        </div>
+        <div class="stat">
+          <label>Happiness</label>
+          <div class="bar"><div class="bar-fill" id="happinessFill"></div></div>
+        </div>
+        <div class="meta">
+          <span>Stage: <strong id="stageLabel">Egg</strong></span>
+          <span>XP: <strong id="xpLabel">0</strong></span>
+          <span>Weekdays survived: <strong id="daysLabel">0</strong></span>
+        </div>
+      </section>
+
+      <!-- ADD TASK: the input + the three difficulty buttons -->
+      <section class="add-task">
+        <input
+          id="taskInput"
+          type="text"
+          placeholder="What do you need to do?"
+          maxlength="120"
+        />
+        <div class="difficulty-row">
+          <button class="diff-btn normal" data-xp="5">+ Normal (5 XP)</button>
+          <button class="diff-btn medium" data-xp="10">+ Medium (10 XP)</button>
+          <button class="diff-btn hard" data-xp="20">+ Hard (20 XP)</button>
+        </div>
+      </section>
+
+      <!-- TODO LIST: app.js fills this in based on saved state -->
+      <section class="todos">
+        <ul id="todoList"></ul>
+        <p id="emptyMsg" class="empty">No tasks yet. Add one above to feed your pet.</p>
+      </section>
+
+      <!-- FOOTER: reset button -->
+      <footer class="footer">
+        <button id="resetBtn" class="ghost-btn danger">reset everything</button>
+      </footer>
+    </main>
+
+    <!-- DEATH OVERLAY: hidden by default; shown when the pet dies -->
+    <div id="deathOverlay" class="overlay hidden">
+      <div class="overlay-card">
+        <div class="gravestone">🪦</div>
+        <h2>RIP <span id="deathName">your pet</span></h2>
+        <p id="deathStats"></p>
+        <button id="reviveBtn" class="primary-btn">Start over with a new egg</button>
+      </div>
+    </div>
+
+    <script src="app.js"></script>
+  </body>
+</html>
