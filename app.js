@@ -271,35 +271,54 @@ function deleteTodo(id) {
   render();
 }
 
-// Editing state lives in memory only (not saved): which todo (if any) is
-// currently being edited. Null means nothing's being edited.
+// Editing state lives in memory only (not saved):
+// - editingId: which todo (if any) is currently being edited (null = none)
+// - editingDraft: the in-progress values being typed; survives re-renders so
+//   the 1-second tick doesn't wipe your input
+// - editingJustStarted: focus the text input only on the first render after
+//   startEdit (so clicking the date picker doesn't get focus-stolen)
 let editingId = null;
+let editingDraft = null;
+let editingJustStarted = false;
 
 function startEdit(id) {
+  const todo = state.todos.find(t => t.id === id);
+  if (!todo) return;
   editingId = id;
+  editingDraft = {
+    text: todo.text,
+    xp: todo.xp,
+    difficulty: todo.difficulty,
+    dueDate: todo.dueDate || "",
+  };
+  editingJustStarted = true;
   render();
 }
 
 function cancelEdit() {
   editingId = null;
+  editingDraft = null;
   render();
 }
 
-function saveEdit(id, newText, newXp, newDifficulty, newDueDate) {
-  const todo = state.todos.find(t => t.id === id);
+function saveEdit() {
+  if (!editingId || !editingDraft) return;
+  const todo = state.todos.find(t => t.id === editingId);
   if (!todo) return;
-  const trimmed = (newText || "").trim();
+  const trimmed = (editingDraft.text || "").trim();
   if (!trimmed) return; // ignore empty saves
   todo.text = trimmed;
-  todo.xp = newXp;
-  todo.difficulty = newDifficulty;
+  todo.xp = editingDraft.xp;
+  todo.difficulty = editingDraft.difficulty;
+  const newDue = editingDraft.dueDate || null;
   // If the due date is changed, reset overdue tracking so the new date is
   // treated as fresh.
-  if ((newDueDate || null) !== (todo.dueDate || null)) {
-    todo.dueDate = newDueDate || null;
+  if (newDue !== (todo.dueDate || null)) {
+    todo.dueDate = newDue;
     todo.overdueLossApplied = 0;
   }
   editingId = null;
+  editingDraft = null;
   saveState();
   render();
 }
@@ -590,7 +609,8 @@ function render() {
     const li = document.createElement("li");
 
     // EDIT MODE — show input + due date + difficulty picker + save/cancel.
-    // Only active (not-done) tasks can be edited.
+    // Values come from editingDraft so the 1-second tick re-render doesn't
+    // wipe what you're typing or stop you from clicking the date picker.
     if (todo.id === editingId && !todo.done) {
       li.className = "todo-item editing";
       li.innerHTML = `
@@ -606,31 +626,35 @@ function render() {
       `;
       const textInput = li.querySelector(".edit-input");
       const dueInput = li.querySelector(".edit-due");
-      textInput.value = todo.text;
-      dueInput.value = todo.dueDate || "";
-      // Track which difficulty is currently selected during the edit
-      let pickedXp = todo.xp;
-      let pickedDiff = todo.difficulty;
+      textInput.value = editingDraft.text;
+      dueInput.value = editingDraft.dueDate || "";
       const diffBtns = li.querySelectorAll(".diff-mini");
       const highlight = () => diffBtns.forEach(b =>
-        b.classList.toggle("active", b.dataset.diff === pickedDiff)
+        b.classList.toggle("active", b.dataset.diff === editingDraft.difficulty)
       );
       highlight();
       diffBtns.forEach(b => b.addEventListener("click", () => {
-        pickedXp = parseInt(b.dataset.xp, 10);
-        pickedDiff = b.dataset.diff;
+        editingDraft.xp = parseInt(b.dataset.xp, 10);
+        editingDraft.difficulty = b.dataset.diff;
         highlight();
       }));
-      li.querySelector(".save-edit").addEventListener("click", () =>
-        saveEdit(todo.id, textInput.value, pickedXp, pickedDiff, dueInput.value || null)
-      );
+      // Keep the draft in sync as you type / pick a date.
+      textInput.addEventListener("input", (e) => { editingDraft.text = e.target.value; });
+      dueInput.addEventListener("input", (e) => { editingDraft.dueDate = e.target.value; });
+      dueInput.addEventListener("change", (e) => { editingDraft.dueDate = e.target.value; });
+      li.querySelector(".save-edit").addEventListener("click", saveEdit);
       li.querySelector(".cancel-edit").addEventListener("click", cancelEdit);
       textInput.addEventListener("keydown", (e) => {
-        if (e.key === "Enter") saveEdit(todo.id, textInput.value, pickedXp, pickedDiff, dueInput.value || null);
+        if (e.key === "Enter") saveEdit();
         if (e.key === "Escape") cancelEdit();
       });
-      // Auto-focus the input so you can just start typing
-      setTimeout(() => textInput.focus(), 0);
+      // Auto-focus the text input ONLY on the first render after startEdit;
+      // otherwise the 1-second tick re-render would steal focus from the
+      // date picker every time the user tried to click it.
+      if (editingJustStarted) {
+        editingJustStarted = false;
+        setTimeout(() => textInput.focus(), 0);
+      }
       targetList.appendChild(li);
       return;
     }

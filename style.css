@@ -157,26 +157,41 @@ html, body {
 .due-row {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
   margin-top: 10px;
   font-size: 12px;
   color: var(--muted);
   flex-wrap: wrap;
 }
 .due-row label { letter-spacing: 1px; text-transform: uppercase; }
-.due-row input[type="date"] {
+.small-ghost { padding: 4px 10px; font-size: 11px; }
+
+/* ----- DATE INPUTS (modern, matches the app palette) ----- */
+input[type="date"] {
   background: var(--panel-2);
   border: 1px solid #3a2a5e;
   color: var(--text);
-  padding: 6px 8px;
-  border-radius: 8px;
+  padding: 10px 12px;
+  border-radius: 10px;
   font-family: inherit;
-  font-size: 13px;
+  font-size: 14px;
   outline: none;
   color-scheme: dark;
+  cursor: pointer;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
 }
-.due-row input[type="date"]:focus { border-color: var(--neon-purple); }
-.small-ghost { padding: 4px 8px; font-size: 11px; }
+input[type="date"]:hover { border-color: var(--neon-purple); }
+input[type="date"]:focus {
+  border-color: var(--neon-purple);
+  box-shadow: 0 0 0 3px rgba(177, 75, 255, 0.2);
+}
+/* Tint the little calendar icon so it pops against the dark theme */
+input[type="date"]::-webkit-calendar-picker-indicator {
+  filter: invert(64%) sepia(50%) saturate(2500%) hue-rotate(245deg) brightness(105%) contrast(101%);
+  cursor: pointer;
+  opacity: 0.9;
+}
+input[type="date"]::-webkit-calendar-picker-indicator:hover { opacity: 1; }
 
 .difficulty-row {
   display: flex;
@@ -300,18 +315,11 @@ html, body {
 }
 .todo-item.is-overdue { box-shadow: inset 3px 0 0 var(--bad); }
 
-/* Edit-mode date input */
+/* Edit-mode date input — slightly smaller than the main one */
 .todo-item .edit-due {
-  background: var(--bg);
-  border: 1px solid #3a2a5e;
-  color: var(--text);
-  padding: 6px 8px;
-  border-radius: 8px;
+  padding: 7px 10px;
   font-size: 13px;
-  color-scheme: dark;
-  outline: none;
 }
-.todo-item .edit-due:focus { border-color: var(--neon-purple); }
 .todo-item.done .text { text-decoration: line-through; color: var(--muted); }
 .todo-item .delete,
 .todo-item .edit {
