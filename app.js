@@ -140,6 +140,32 @@ function weekdayMillisBetween(startMs, endMs) {
 // 5) GAME LOGIC — what happens when time passes or tasks finish.
 // ============================================================
 
+// daysBetween: how many full calendar days from one YYYY-MM-DD to another.
+// Used for overdue task XP penalty.
+function daysBetween(fromKey, toKey) {
+  const a = new Date(fromKey + "T00:00:00");
+  const b = new Date(toKey + "T00:00:00");
+  return Math.floor((b - a) / (1000 * 60 * 60 * 24));
+}
+
+// Apply -1 XP per day overdue to every unfinished task with a due date.
+// Catches up if you've been away — e.g. 3 days overdue when you reopen
+// applies the full -3 in one go. Task XP never drops below 0.
+function applyOverdueLosses() {
+  const todayKey = dayKey(new Date());
+  state.todos.forEach(todo => {
+    if (todo.done) return;
+    if (!todo.dueDate) return;
+    const overdueDays = Math.max(0, daysBetween(todo.dueDate, todayKey));
+    const applied = todo.overdueLossApplied || 0;
+    const toApply = overdueDays - applied;
+    if (toApply > 0) {
+      todo.xp = Math.max(0, (todo.xp || 0) - toApply);
+      todo.overdueLossApplied = overdueDays;
+    }
+  });
+}
+
 // Catch up: called on page load AND every tick.
 // Applies decay for the time since we last looked.
 function applyTimePassage() {
@@ -174,6 +200,9 @@ function applyTimePassage() {
   if (state.pet.alive && state.pet.hunger <= 0 && state.pet.happiness <= 0) {
     state.pet.alive = false;
   }
+
+  // Apply overdue penalties for any unfinished tasks past their due date.
+  applyOverdueLosses();
 
   // Check evolution (level up if BOTH thresholds met).
   // When evolution fires, Penny "eats the biscuit": big feed + happiness bonus,
@@ -219,7 +248,7 @@ function uncompleteTask(todo) {
   }
 }
 
-function addTodo(text, xp, difficulty) {
+function addTodo(text, xp, difficulty, dueDate) {
   const trimmed = text.trim();
   if (!trimmed) return;
   state.todos.unshift({
@@ -228,6 +257,9 @@ function addTodo(text, xp, difficulty) {
     xp,
     difficulty,
     done: false,
+    awarded: false,
+    dueDate: dueDate || null,            // "YYYY-MM-DD" or null
+    overdueLossApplied: 0,               // total XP already deducted for lateness
   });
   saveState();
   render();
@@ -253,7 +285,7 @@ function cancelEdit() {
   render();
 }
 
-function saveEdit(id, newText, newXp, newDifficulty) {
+function saveEdit(id, newText, newXp, newDifficulty, newDueDate) {
   const todo = state.todos.find(t => t.id === id);
   if (!todo) return;
   const trimmed = (newText || "").trim();
@@ -261,6 +293,12 @@ function saveEdit(id, newText, newXp, newDifficulty) {
   todo.text = trimmed;
   todo.xp = newXp;
   todo.difficulty = newDifficulty;
+  // If the due date is changed, reset overdue tracking so the new date is
+  // treated as fresh.
+  if ((newDueDate || null) !== (todo.dueDate || null)) {
+    todo.dueDate = newDueDate || null;
+    todo.overdueLossApplied = 0;
+  }
   editingId = null;
   saveState();
   render();
@@ -551,12 +589,13 @@ function render() {
     const targetList = todo.done ? doneList : list;
     const li = document.createElement("li");
 
-    // EDIT MODE — show input + difficulty picker + save/cancel.
+    // EDIT MODE — show input + due date + difficulty picker + save/cancel.
     // Only active (not-done) tasks can be edited.
     if (todo.id === editingId && !todo.done) {
       li.className = "todo-item editing";
       li.innerHTML = `
         <input type="text" class="edit-input" maxlength="120" />
+        <input type="date" class="edit-due" />
         <div class="edit-diff-row">
           <button class="diff-mini normal" data-xp="5" data-diff="normal">5</button>
           <button class="diff-mini medium" data-xp="10" data-diff="medium">10</button>
@@ -566,7 +605,9 @@ function render() {
         <button class="cancel-edit" title="Cancel">×</button>
       `;
       const textInput = li.querySelector(".edit-input");
+      const dueInput = li.querySelector(".edit-due");
       textInput.value = todo.text;
+      dueInput.value = todo.dueDate || "";
       // Track which difficulty is currently selected during the edit
       let pickedXp = todo.xp;
       let pickedDiff = todo.difficulty;
@@ -581,11 +622,11 @@ function render() {
         highlight();
       }));
       li.querySelector(".save-edit").addEventListener("click", () =>
-        saveEdit(todo.id, textInput.value, pickedXp, pickedDiff)
+        saveEdit(todo.id, textInput.value, pickedXp, pickedDiff, dueInput.value || null)
       );
       li.querySelector(".cancel-edit").addEventListener("click", cancelEdit);
       textInput.addEventListener("keydown", (e) => {
-        if (e.key === "Enter") saveEdit(todo.id, textInput.value, pickedXp, pickedDiff);
+        if (e.key === "Enter") saveEdit(todo.id, textInput.value, pickedXp, pickedDiff, dueInput.value || null);
         if (e.key === "Escape") cancelEdit();
       });
       // Auto-focus the input so you can just start typing
@@ -595,12 +636,29 @@ function render() {
     }
 
     // NORMAL MODE
-    li.className = "todo-item" + (todo.done ? " done" : "");
+    // Compute due-date label and whether this task is overdue today.
+    const todayKey = dayKey(new Date());
+    const isOverdue = !todo.done && todo.dueDate && todo.dueDate < todayKey;
+    const isDueToday = !todo.done && todo.dueDate && todo.dueDate === todayKey;
+    let dueLabel = "";
+    if (todo.dueDate) {
+      const overdueDays = Math.max(0, daysBetween(todo.dueDate, todayKey));
+      if (isOverdue) {
+        dueLabel = `<span class="due-tag overdue">${overdueDays}d overdue · −${overdueDays} XP</span>`;
+      } else if (isDueToday) {
+        dueLabel = `<span class="due-tag today">due today</span>`;
+      } else {
+        dueLabel = `<span class="due-tag">due ${todo.dueDate}</span>`;
+      }
+    }
+
+    li.className = "todo-item" + (todo.done ? " done" : "") + (isOverdue ? " is-overdue" : "");
     // Done tasks don't get an edit button (they're locked once completed).
     const editBtn = todo.done ? "" : `<button class="edit" title="Edit">✎</button>`;
     li.innerHTML = `
       <input type="checkbox" ${todo.done ? "checked" : ""} />
       <span class="text"></span>
+      ${dueLabel}
       <span class="xp-tag ${todo.difficulty}">${todo.xp} XP</span>
       ${editBtn}
       <button class="delete" title="Delete">×</button>
@@ -702,20 +760,28 @@ function setBar(id, value) {
 document.querySelectorAll(".diff-btn").forEach(btn => {
   btn.addEventListener("click", () => {
     const input = document.getElementById("taskInput");
+    const due = document.getElementById("dueInput").value || null;
     const xp = parseInt(btn.dataset.xp, 10);
     const difficulty = btn.classList.contains("hard") ? "hard"
                      : btn.classList.contains("medium") ? "medium" : "normal";
-    addTodo(input.value, xp, difficulty);
+    addTodo(input.value, xp, difficulty, due);
     input.value = "";
+    document.getElementById("dueInput").value = "";
     input.focus();
   });
+});
+
+document.getElementById("clearDue").addEventListener("click", () => {
+  document.getElementById("dueInput").value = "";
 });
 
 // Pressing Enter in the input = add as Medium (a sensible default)
 document.getElementById("taskInput").addEventListener("keydown", (e) => {
   if (e.key === "Enter") {
-    addTodo(e.target.value, 10, "medium");
+    const due = document.getElementById("dueInput").value || null;
+    addTodo(e.target.value, 10, "medium", due);
     e.target.value = "";
+    document.getElementById("dueInput").value = "";
   }
 });
 

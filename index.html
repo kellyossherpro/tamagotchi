@@ -46,7 +46,7 @@
         </div>
       </section>
 
-      <!-- ADD TASK: the input + the three difficulty buttons -->
+      <!-- ADD TASK: the input + optional due date + the three difficulty buttons -->
       <section class="add-task">
         <input
           id="taskInput"
@@ -54,6 +54,11 @@
           placeholder="What do you need to do?"
           maxlength="120"
         />
+        <div class="due-row">
+          <label for="dueInput">Due (optional):</label>
+          <input id="dueInput" type="date" />
+          <button id="clearDue" type="button" class="ghost-btn small-ghost" title="Clear date">clear</button>
+        </div>
         <div class="difficulty-row">
           <button class="diff-btn normal" data-xp="5">+ Normal (5 XP)</button>
           <button class="diff-btn medium" data-xp="10">+ Medium (10 XP)</button>

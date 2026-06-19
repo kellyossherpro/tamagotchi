@@ -154,6 +154,30 @@ html, body {
 }
 #taskInput:focus { border-color: var(--neon-purple); }
 
+.due-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 10px;
+  font-size: 12px;
+  color: var(--muted);
+  flex-wrap: wrap;
+}
+.due-row label { letter-spacing: 1px; text-transform: uppercase; }
+.due-row input[type="date"] {
+  background: var(--panel-2);
+  border: 1px solid #3a2a5e;
+  color: var(--text);
+  padding: 6px 8px;
+  border-radius: 8px;
+  font-family: inherit;
+  font-size: 13px;
+  outline: none;
+  color-scheme: dark;
+}
+.due-row input[type="date"]:focus { border-color: var(--neon-purple); }
+.small-ghost { padding: 4px 8px; font-size: 11px; }
+
 .difficulty-row {
   display: flex;
   gap: 8px;
@@ -254,6 +278,40 @@ html, body {
 .todo-item .xp-tag.normal { background: var(--neon-teal); }
 .todo-item .xp-tag.medium { background: var(--neon-yellow); }
 .todo-item .xp-tag.hard   { background: var(--neon-pink); }
+
+/* Due-date pill on each task */
+.todo-item .due-tag {
+  font-size: 11px;
+  padding: 3px 8px;
+  border-radius: 999px;
+  background: var(--panel-2);
+  color: var(--muted);
+  border: 1px solid #3a2a5e;
+}
+.todo-item .due-tag.today {
+  color: var(--neon-yellow);
+  border-color: var(--neon-yellow);
+}
+.todo-item .due-tag.overdue {
+  color: #15101e;
+  background: var(--bad);
+  border-color: var(--bad);
+  font-weight: 700;
+}
+.todo-item.is-overdue { box-shadow: inset 3px 0 0 var(--bad); }
+
+/* Edit-mode date input */
+.todo-item .edit-due {
+  background: var(--bg);
+  border: 1px solid #3a2a5e;
+  color: var(--text);
+  padding: 6px 8px;
+  border-radius: 8px;
+  font-size: 13px;
+  color-scheme: dark;
+  outline: none;
+}
+.todo-item .edit-due:focus { border-color: var(--neon-purple); }
 .todo-item.done .text { text-decoration: line-through; color: var(--muted); }
 .todo-item .delete,
 .todo-item .edit {
