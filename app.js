@@ -248,7 +248,7 @@ function uncompleteTask(todo) {
   }
 }
 
-function addTodo(text, xp, difficulty, dueDate) {
+function addTodo(text, xp, difficulty, dueDate, description, link) {
   const trimmed = text.trim();
   if (!trimmed) return;
   state.todos.unshift({
@@ -260,6 +260,8 @@ function addTodo(text, xp, difficulty, dueDate) {
     awarded: false,
     dueDate: dueDate || null,            // "YYYY-MM-DD" or null
     overdueLossApplied: 0,               // total XP already deducted for lateness
+    description: (description || "").trim(),
+    link: (link || "").trim(),
   });
   saveState();
   render();
@@ -290,6 +292,8 @@ function startEdit(id) {
     xp: todo.xp,
     difficulty: todo.difficulty,
     dueDate: todo.dueDate || "",
+    description: todo.description || "",
+    link: todo.link || "",
   };
   editingJustStarted = true;
   render();
@@ -310,6 +314,8 @@ function saveEdit() {
   todo.text = trimmed;
   todo.xp = editingDraft.xp;
   todo.difficulty = editingDraft.difficulty;
+  todo.description = (editingDraft.description || "").trim();
+  todo.link = (editingDraft.link || "").trim();
   const newDue = editingDraft.dueDate || null;
   // If the due date is changed, reset overdue tracking so the new date is
   // treated as fresh.
@@ -613,23 +619,31 @@ function render() {
     const targetList = todo.done ? doneList : list;
     const li = document.createElement("li");
 
-    // EDIT MODE — show input + due date + difficulty picker + save/cancel.
+    // EDIT MODE — show input + description + link + due date + difficulty picker + save/cancel.
     if (todo.id === editingId && !todo.done) {
       li.className = "todo-item editing";
       li.innerHTML = `
         <input type="text" class="edit-input" maxlength="120" />
-        <input type="date" class="edit-due" />
-        <div class="edit-diff-row">
-          <button class="diff-mini normal" data-xp="5" data-diff="normal">5</button>
-          <button class="diff-mini medium" data-xp="10" data-diff="medium">10</button>
-          <button class="diff-mini hard" data-xp="20" data-diff="hard">20</button>
+        <textarea class="edit-desc" rows="2" maxlength="500" placeholder="Description (optional)"></textarea>
+        <input type="url" class="edit-link" placeholder="Link (optional) — https://…" />
+        <div class="edit-actions">
+          <input type="date" class="edit-due" />
+          <div class="edit-diff-row">
+            <button class="diff-mini normal" data-xp="5" data-diff="normal">5</button>
+            <button class="diff-mini medium" data-xp="10" data-diff="medium">10</button>
+            <button class="diff-mini hard" data-xp="20" data-diff="hard">20</button>
+          </div>
+          <button class="save-edit" title="Save">✓</button>
+          <button class="cancel-edit" title="Cancel">×</button>
         </div>
-        <button class="save-edit" title="Save">✓</button>
-        <button class="cancel-edit" title="Cancel">×</button>
       `;
       const textInput = li.querySelector(".edit-input");
+      const descInput = li.querySelector(".edit-desc");
+      const linkInput = li.querySelector(".edit-link");
       const dueInput = li.querySelector(".edit-due");
       textInput.value = editingDraft.text;
+      descInput.value = editingDraft.description || "";
+      linkInput.value = editingDraft.link || "";
       dueInput.value = editingDraft.dueDate || "";
       const diffBtns = li.querySelectorAll(".diff-mini");
       const highlight = () => diffBtns.forEach(b =>
@@ -643,6 +657,8 @@ function render() {
       }));
       // Keep the draft in sync as you type / pick a date.
       textInput.addEventListener("input", (e) => { editingDraft.text = e.target.value; });
+      descInput.addEventListener("input", (e) => { editingDraft.description = e.target.value; });
+      linkInput.addEventListener("input", (e) => { editingDraft.link = e.target.value; });
       dueInput.addEventListener("input", (e) => { editingDraft.dueDate = e.target.value; });
       dueInput.addEventListener("change", (e) => { editingDraft.dueDate = e.target.value; });
       li.querySelector(".save-edit").addEventListener("click", saveEdit);
@@ -682,15 +698,29 @@ function render() {
     li.className = "todo-item" + (todo.done ? " done" : "") + (isOverdue ? " is-overdue" : "");
     // Done tasks don't get an edit button (they're locked once completed).
     const editBtn = todo.done ? "" : `<button class="edit" title="Edit">✎</button>`;
+    // Optional link icon next to the title (clickable, opens in new tab).
+    const linkBtn = todo.link
+      ? `<a class="task-link" target="_blank" rel="noopener noreferrer" title="Open link">↗</a>`
+      : "";
+    // Optional description block below the title row.
+    const descBlock = (todo.description && todo.description.trim())
+      ? `<p class="task-desc"></p>`
+      : "";
     li.innerHTML = `
-      <input type="checkbox" ${todo.done ? "checked" : ""} />
-      <span class="text"></span>
-      ${dueLabel}
-      <span class="xp-tag ${todo.difficulty}">${todo.xp} XP</span>
-      ${editBtn}
-      <button class="delete" title="Delete">×</button>
+      <div class="todo-head">
+        <input type="checkbox" ${todo.done ? "checked" : ""} />
+        <span class="text"></span>
+        ${linkBtn}
+        ${dueLabel}
+        <span class="xp-tag ${todo.difficulty}">${todo.xp} XP</span>
+        ${editBtn}
+        <button class="delete" title="Delete">×</button>
+      </div>
+      ${descBlock}
     `;
     li.querySelector(".text").textContent = todo.text;
+    if (todo.link) li.querySelector(".task-link").href = todo.link;
+    if (descBlock) li.querySelector(".task-desc").textContent = todo.description;
     li.querySelector("input").addEventListener("change", (e) => {
       if (e.target.checked) completeTask(todo);
       else uncompleteTask(todo);
@@ -784,17 +814,30 @@ function setBar(id, value) {
 // 9) WIRE UP — connect buttons + inputs to the functions above.
 // ============================================================
 
+// Helper: read every field in the add form and clear them after use.
+function readAddForm() {
+  const text = document.getElementById("taskInput").value;
+  const due = document.getElementById("dueInput").value || null;
+  const description = document.getElementById("descInput").value;
+  const link = document.getElementById("linkInput").value;
+  return { text, due, description, link };
+}
+function clearAddForm() {
+  document.getElementById("taskInput").value = "";
+  document.getElementById("dueInput").value = "";
+  document.getElementById("descInput").value = "";
+  document.getElementById("linkInput").value = "";
+}
+
 document.querySelectorAll(".diff-btn").forEach(btn => {
   btn.addEventListener("click", () => {
-    const input = document.getElementById("taskInput");
-    const due = document.getElementById("dueInput").value || null;
+    const f = readAddForm();
     const xp = parseInt(btn.dataset.xp, 10);
     const difficulty = btn.classList.contains("hard") ? "hard"
                      : btn.classList.contains("medium") ? "medium" : "normal";
-    addTodo(input.value, xp, difficulty, due);
-    input.value = "";
-    document.getElementById("dueInput").value = "";
-    input.focus();
+    addTodo(f.text, xp, difficulty, f.due, f.description, f.link);
+    clearAddForm();
+    document.getElementById("taskInput").focus();
   });
 });
 
@@ -802,13 +845,13 @@ document.getElementById("clearDue").addEventListener("click", () => {
   document.getElementById("dueInput").value = "";
 });
 
-// Pressing Enter in the input = add as Medium (a sensible default)
+// Pressing Enter in the title input = add as Medium (a sensible default).
+// Shift+Enter is allowed inside the description textarea for a new line.
 document.getElementById("taskInput").addEventListener("keydown", (e) => {
   if (e.key === "Enter") {
-    const due = document.getElementById("dueInput").value || null;
-    addTodo(e.target.value, 10, "medium", due);
-    e.target.value = "";
-    document.getElementById("dueInput").value = "";
+    const f = readAddForm();
+    addTodo(f.text, 10, "medium", f.due, f.description, f.link);
+    clearAddForm();
   }
 });
 

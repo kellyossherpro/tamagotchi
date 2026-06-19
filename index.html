@@ -47,13 +47,24 @@
         </div>
       </section>
 
-      <!-- ADD TASK: the input + optional due date + the three difficulty buttons -->
+      <!-- ADD TASK: the inputs + optional due date + the three difficulty buttons -->
       <section class="add-task">
         <input
           id="taskInput"
           type="text"
           placeholder="What do you need to do?"
           maxlength="120"
+        />
+        <textarea
+          id="descInput"
+          placeholder="Description (optional) — what needs to happen?"
+          rows="2"
+          maxlength="500"
+        ></textarea>
+        <input
+          id="linkInput"
+          type="url"
+          placeholder="Link (optional) — where to do it (https://…)"
         />
         <div class="due-row">
           <label for="dueInput">Due (optional):</label>
