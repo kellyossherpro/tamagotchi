@@ -576,6 +576,10 @@ input[type="date"]::-webkit-calendar-picker-indicator:hover { opacity: 1; }
   text-align: center;
   max-width: 380px;
   border: 1px solid #3a2a5e;
+  /* Never let the card grow taller than the viewport — scroll inside instead */
+  max-height: 90vh;
+  overflow-y: auto;
+  width: calc(100% - 40px);
 }
 .gravestone {
   font-size: 64px;
