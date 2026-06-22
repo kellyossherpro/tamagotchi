@@ -46,6 +46,13 @@ The CRM has to actually do these things before the team can touch it.
 - [ ] Finance notified when deal goes Live (Finance Handover — to Kelly + deal owner, contract forwarded)
 - [ ] Collaborator routing on Proposal stage: Dieg for Africa deals, Sarah/Robert for International
 
+### Notifications (delivery layer)
+- [ ] Every notification fires **both** email and in-CRM notification board entry
+- [ ] Notification board: inbox-style view per user, showing all alerts directed at them
+- [ ] Mark-as-read and unread count badge on the CRM tile
+- [ ] Filter notifications by type (handover / stage change / stale deal / mention)
+- [ ] Notifications link back to the deal / company / contact that triggered them
+
 ### Role-based views
 - [ ] Sales sees: pipeline kanban, my open deals, my contacts
 - [ ] Account Management sees: my accounts, upcoming renewals

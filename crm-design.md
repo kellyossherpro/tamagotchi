@@ -74,6 +74,10 @@ This is the part of the CRM that *isn't* generic — it's specific to how Kelly 
 - **Support:** triggered at Closed Won when Support Contact Email is added → notification + support handover info.
 - **Finance:** triggered when deal goes Live → notification to Kelly + deal owner, contract forwarded to Finance.
 
+**Notification delivery (two channels, every notification fires both):**
+- **Email** to the relevant person(s) — same as HubSpot does today.
+- **In-CRM notification board** — a single inbox-style view inside the CRM tile showing every alert for the current user (handovers due, deals stale, stage transitions on owned deals, etc.). Mark-as-read, filter by type. Replaces the scattered HubSpot pop-up pattern with one place to look.
+
 **Implementation note:** the stage engine is fundamentally three rules applied per stage:
 1. Required-properties check (advance when complete)
 2. 60-day stale timer (move to On Hold)

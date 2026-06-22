@@ -60,6 +60,16 @@ A working doc for Kelly + Patrick to go through together. Goal: understand the p
 - If I'm unavailable and something breaks, are you willing to be the emergency contact? At what level — "the tile is down" vs. "a field is wrong"?
 - Does the portal back up its database? How often? Can data be restored to a point in time?
 
+## 9b. Scheduled jobs
+
+- The pipeline engine needs a daily background job: "find any deals where required-properties have been incomplete for 60 days → move them to On Hold." Does the portal have a scheduled job runner today (cron, background worker, scheduled function)? If not, what's the easiest way to add one?
+
+## 9c. Sending email from the portal
+
+- Notifications (handovers, stage changes, stale deals) need to be sent as email **and** stored in an in-CRM notification board.
+- Does the portal already send transactional email from any other tile? If so, what does it use (SMTP relay, SendGrid, Microsoft Graph, other)?
+- Any deliverability/SPF/DKIM constraints I should know about?
+
 ## 10. Integrations
 
 - The CRM will eventually need Microsoft Graph (Outlook email/calendar logging). Has the portal connected to Graph before? Any auth/app-registration pieces already in place I can reuse?
