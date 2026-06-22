@@ -20,9 +20,31 @@ The CRM has to actually do these things before the team can touch it.
 
 ### Pipeline & deal management
 - [ ] Pipeline view (kanban or list) showing deals by stage
-- [ ] Move deals between stages (drag-and-drop or dropdown)
+- [ ] All 11 stages present: Lead, Qualified Lead, Customer Engagement, Feasibility (RICE), Proposal, Legal & Compliance, Closed Won, Live, On Hold, Closed Lost, Terminated
 - [ ] Filter pipeline by owner, close date, value
-- [ ] Closed-won / closed-lost handling (reason captured)
+- [ ] Closed-won / closed-lost / terminated handling (reason + date captured)
+
+### Stage-gate engine (per `sales_pipeline_process.docx`)
+- [ ] Each stage's required-property list configured and enforced
+- [ ] Auto-advance: when all required properties for current stage are complete → deal moves to next stage automatically
+- [ ] 60-day stale rule: if required properties remain incomplete for 60 days → deal auto-moves to On Hold
+- [ ] Branching at Customer Engagement: `Integration Type = Custom` → Feasibility (RICE); `Vanilla` → Proposal
+- [ ] All required properties from the pipeline spec exist as fields on the Deal object (Lead: Deal Name, Deal Owner, Country, Lead Source… all the way through Live)
+- [ ] On Hold reason dropdown, Closed Lost reason + date, Terminated yes/no + date
+- [ ] Audit log of stage transitions (who/what/when), so we can debug stuck deals
+
+### Document generation triggers
+- [ ] Entering Proposal stage → Proposals tile auto-generates a proposal
+- [ ] Entering Legal & Compliance stage → Contracts tile auto-generates a contract
+- [ ] NDA generated when needed at Legal & Compliance (per touch-points diagram)
+
+### Departmental handover triggers
+- [ ] Dev/Tech notified when Integration Type = RICE (Customer Engagement / Feasibility)
+- [ ] Legal notified when deal enters Legal & Compliance
+- [ ] Marketing notified at Closed Won when Marketing Contact Email is added (Marketing Handover)
+- [ ] Support notified at Closed Won when Support Contact Email is added (Support Handover)
+- [ ] Finance notified when deal goes Live (Finance Handover — to Kelly + deal owner, contract forwarded)
+- [ ] Collaborator routing on Proposal stage: Dieg for Africa deals, Sarah/Robert for International
 
 ### Role-based views
 - [ ] Sales sees: pipeline kanban, my open deals, my contacts
@@ -44,7 +66,7 @@ The CRM has to actually do these things before the team can touch it.
 - [ ] Contracts tile generates contracts from CRM data (not HubSpot)
 - [ ] Support view replaces Smartsheet zap (same filtered info, in-portal)
 
-### Workflows (Kelly to confirm the real list)
+### Workflows (beyond the stage engine)
 - [ ] Lead assignment on inbound — working
 - [ ] Deal stage change notifications (Slack/Teams) — working
 - [ ] Renewal reminders for AM — working

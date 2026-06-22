@@ -46,10 +46,40 @@ Four objects, full stop:
 
 - **Companies** — the account
 - **Contacts** — people at the account (FK to Company)
-- **Deals** — opportunity with stage, value, owner, close date (FK to Company)
+- **Deals** — opportunity with stage, value, owner, close date (FK to Company). **Deals have many properties (~40+) — see Sales Pipeline spec.** Properties drive stage progression.
 - **Activities** — notes, calls, emails, meetings on a single timeline (polymorphic FK to Company / Contact / Deal)
 
 Anything beyond this (tickets, sequences, custom property groups, lists-of-lists) is deferred until a real workflow demands it.
+
+## Pipeline stage-gate engine (the heart of the system)
+
+This is the part of the CRM that *isn't* generic — it's specific to how Kelly runs the sales process. Documented in full in `sales_pipeline_process.docx`.
+
+**11 stages:** Lead → Qualified Lead → Customer Engagement → Feasibility (RICE, custom only) → Proposal → Legal & Compliance → Closed Won → Live, plus On Hold / Closed Lost / Terminated as terminal/parking states.
+
+**Stage progression rules:**
+- Each stage has a defined list of **required properties**.
+- When all required properties for a stage are filled → deal **auto-advances** to next stage.
+- If properties remain incomplete for **60 days** → deal **auto-moves to On Hold**.
+- **Branching at Customer Engagement:** if `Integration Type = Custom` → goes to Feasibility (RICE). If `Vanilla` → skips RICE, goes to Proposal.
+
+**Document generation triggers:**
+- Entering **Proposal** stage → Proposals tile auto-generates a proposal.
+- Entering **Legal & Compliance** stage → Contracts tile auto-generates a contract + NDA when needed.
+
+**Departmental handovers** (from `interdepartmental_touch_points` diagram):
+- **Dev/Tech:** triggered at Customer Engagement / Feasibility when `Integration Type = RICE`. RICE evaluation needed.
+- **Legal:** triggered when deal enters Legal & Compliance. Drafts NDA + contract, requests CDD, gets countersigned.
+- **Marketing:** triggered at Closed Won when Marketing Contact Email is added → notification + marketing handover info.
+- **Support:** triggered at Closed Won when Support Contact Email is added → notification + support handover info.
+- **Finance:** triggered when deal goes Live → notification to Kelly + deal owner, contract forwarded to Finance.
+
+**Implementation note:** the stage engine is fundamentally three rules applied per stage:
+1. Required-properties check (advance when complete)
+2. 60-day stale timer (move to On Hold)
+3. Side effects on entry to certain stages (generate doc / send notification / trigger handover)
+
+Build this once as a generic engine, configure it per stage. Don't hardcode 11 stages of bespoke logic.
 
 ### Cross-tile links (the unique value)
 
