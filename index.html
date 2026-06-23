@@ -33,12 +33,18 @@
 
           <!-- STATS: hunger, happiness, level/xp, days survived -->
           <section class="stats">
-            <div class="stat">
-              <label>Hunger</label>
+            <div class="stat" id="hungerStat">
+              <div class="stat-label-row">
+                <label>Hunger</label>
+                <span class="stat-value" id="hungerValue">100 / 100</span>
+              </div>
               <div class="bar"><div class="bar-fill" id="hungerFill"></div></div>
             </div>
-            <div class="stat">
-              <label>Happiness</label>
+            <div class="stat" id="happinessStat">
+              <div class="stat-label-row">
+                <label>Happiness</label>
+                <span class="stat-value" id="happinessValue">100 / 100</span>
+              </div>
               <div class="bar"><div class="bar-fill" id="happinessFill"></div></div>
             </div>
             <div class="meta">

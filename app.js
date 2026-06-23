@@ -624,9 +624,11 @@ function render() {
     mood.textContent = "";
   }
 
-  // Stat bars
+  // Stat bars + their numeric labels + hover-tooltip explanations
   setBar("hungerFill", state.pet.hunger);
   setBar("happinessFill", state.pet.happiness);
+  updateStatLabel("hungerStat", "hungerValue", state.pet.hunger, buildHungerTooltip());
+  updateStatLabel("happinessStat", "happinessValue", state.pet.happiness, buildHappinessTooltip());
 
   // Meta
   document.getElementById("stageLabel").textContent = STAGES[state.pet.stageIndex].name;
@@ -856,6 +858,49 @@ function setBar(id, value) {
   if (value > 60) el.style.background = "var(--good)";
   else if (value > 30) el.style.background = "var(--okay)";
   else el.style.background = "var(--bad)";
+}
+
+// Show "73 / 100" next to the bar label, and put a friendly explanation
+// into the stat's title attribute (browser-native hover bubble).
+function updateStatLabel(statId, valueId, value, tooltipText) {
+  const rounded = Math.round(value);
+  document.getElementById(valueId).textContent = `${rounded} / 100`;
+  document.getElementById(statId).title = tooltipText;
+}
+
+function buildHungerTooltip() {
+  const h = Math.round(state.pet.hunger);
+  const lacking = 100 - h;
+  const weekend = isWeekend(new Date());
+  let status;
+  if (h >= 90)      status = `She's full and happy.`;
+  else if (h >= 60) status = `She's doing fine.`;
+  else if (h >= 30) status = `She's getting peckish.`;
+  else if (h > 0)   status = `She's hungry!`;
+  else              status = `She's starving!`;
+  const rule = weekend
+    ? `Weekend — hunger doesn't decay until Monday.`
+    : `Drops about 50 points per weekday.`;
+  return `Hunger: ${h} / 100 (lacking ${lacking}).\n${status}\n${rule}\nEach task you tick off feeds her +20 hunger.`;
+}
+
+function buildHappinessTooltip() {
+  const hp = Math.round(state.pet.happiness);
+  const lacking = 100 - hp;
+  const weekend = isWeekend(new Date());
+  let status;
+  if (hp >= 90)      status = `She's beaming.`;
+  else if (hp >= 60) status = `She's content.`;
+  else if (hp >= 30) status = `She's a bit glum.`;
+  else if (hp > 0)   status = `She's miserable!`;
+  else               status = `She's heartbroken!`;
+  const hungryNote = state.pet.hunger < HUNGRY_THRESHOLD
+    ? ` Happiness drops 50% faster right now because she's hungry.`
+    : ``;
+  const rule = weekend
+    ? `Weekend — happiness doesn't decay until Monday.`
+    : `Drops about 50 points per weekday.${hungryNote}`;
+  return `Happiness: ${hp} / 100 (lacking ${lacking}).\n${status}\n${rule}\nEach task you tick off cheers her up +15.`;
 }
 
 // ============================================================
