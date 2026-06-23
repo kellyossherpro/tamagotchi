@@ -456,121 +456,242 @@ const SVGS = {
       <ellipse cx="35" cy="70" rx="3" ry="2" fill="#b14bff" opacity="0.6"/>
     </svg>`,
 
-  // STAGE 1: Blob
+  // STAGE 1: Blob — galaxy edition (cosmic purple → magenta with inner stars + blush)
   1: `
     <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-      <path d="M20,70 Q15,40 50,30 Q85,40 80,70 Q80,85 50,85 Q20,85 20,70 Z"
-            fill="#b14bff" stroke="#ff4fbf" stroke-width="2"/>
-      <circle cx="40" cy="55" r="5" fill="white"/>
-      <circle cx="60" cy="55" r="5" fill="white"/>
-      <circle cx="40" cy="56" r="2.5" fill="#15101e"/>
-      <circle cx="60" cy="56" r="2.5" fill="#15101e"/>
-      <path d="M44,70 Q50,74 56,70" stroke="#15101e" stroke-width="2" fill="none" stroke-linecap="round"/>
+      <defs>
+        <radialGradient id="blobGalaxy" cx="38%" cy="32%" r="78%">
+          <stop offset="0%" stop-color="#ff8fd6"/>
+          <stop offset="35%" stop-color="#b14bff"/>
+          <stop offset="75%" stop-color="#5a2bb0"/>
+          <stop offset="100%" stop-color="#1e1a55"/>
+        </radialGradient>
+      </defs>
+      <!-- wobbly blob body with extra bumps -->
+      <path d="M 50,16
+               C 76,14 92,32 88,52
+               C 96,68 80,86 60,84
+               C 44,92 18,84 16,64
+               C 6,48 18,24 36,22
+               C 40,18 46,16 50,16 Z"
+            fill="url(#blobGalaxy)"
+            stroke="#ff4fbf" stroke-width="2"
+            filter="drop-shadow(0 0 6px rgba(177,75,255,.45))"/>
+      <!-- inner stars / cosmic sparkles -->
+      <circle cx="28" cy="40" r="1.4" fill="#ffffff" opacity="0.95"/>
+      <circle cx="68" cy="32" r="1" fill="#ffffff" opacity="0.85"/>
+      <circle cx="72" cy="62" r="1.5" fill="#ffd84a" opacity="0.9"/>
+      <circle cx="22" cy="62" r="1" fill="#2ee6c8" opacity="0.9"/>
+      <circle cx="55" cy="78" r="1.2" fill="#ffffff" opacity="0.8"/>
+      <circle cx="40" cy="28" r="0.8" fill="#2ee6c8" opacity="0.9"/>
+      <circle cx="80" cy="46" r="0.9" fill="#ffffff" opacity="0.8"/>
+      <!-- big cute eyes -->
+      <circle cx="38" cy="50" r="7" fill="#ffffff"/>
+      <circle cx="62" cy="50" r="7" fill="#ffffff"/>
+      <circle cx="38" cy="52" r="3.4" fill="#15101e"/>
+      <circle cx="62" cy="52" r="3.4" fill="#15101e"/>
+      <!-- twinkle reflections -->
+      <circle cx="36" cy="50" r="1.3" fill="#ffffff"/>
+      <circle cx="60" cy="50" r="1.3" fill="#ffffff"/>
+      <!-- blush -->
+      <ellipse cx="26" cy="60" rx="4" ry="2" fill="#ff4fbf" opacity="0.55"/>
+      <ellipse cx="74" cy="60" rx="4" ry="2" fill="#ff4fbf" opacity="0.55"/>
+      <!-- happy mouth -->
+      <path d="M 42,66 Q 50,73 58,66" stroke="#15101e" stroke-width="2.4" fill="none" stroke-linecap="round"/>
     </svg>`,
 
-  // STAGE 2: 1-headed puppy
+  // STAGE 2: 1-headed puppy — galaxy fur with twinkling stars
   2: `
     <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-      <!-- body -->
-      <ellipse cx="50" cy="72" rx="24" ry="14" fill="#7a3eb8"/>
-      <!-- legs -->
-      <rect x="33" y="78" width="6" height="12" rx="2" fill="#7a3eb8"/>
-      <rect x="61" y="78" width="6" height="12" rx="2" fill="#7a3eb8"/>
+      <defs>
+        <radialGradient id="pup1Body" cx="40%" cy="30%" r="80%">
+          <stop offset="0%" stop-color="#c87aff"/>
+          <stop offset="60%" stop-color="#6b2bc4"/>
+          <stop offset="100%" stop-color="#1e1a55"/>
+        </radialGradient>
+        <radialGradient id="pup1Head" cx="40%" cy="30%" r="80%">
+          <stop offset="0%" stop-color="#ff8fd6"/>
+          <stop offset="60%" stop-color="#a04bd6"/>
+          <stop offset="100%" stop-color="#2a1f6b"/>
+        </radialGradient>
+      </defs>
+      <!-- body + legs -->
+      <ellipse cx="50" cy="72" rx="24" ry="14" fill="url(#pup1Body)"/>
+      <rect x="33" y="78" width="6" height="12" rx="2" fill="#6b2bc4"/>
+      <rect x="61" y="78" width="6" height="12" rx="2" fill="#6b2bc4"/>
       <!-- head -->
-      <circle cx="50" cy="42" r="20" fill="#9655d6"/>
+      <circle cx="50" cy="42" r="20" fill="url(#pup1Head)"/>
       <!-- ears -->
-      <ellipse cx="35" cy="32" rx="6" ry="10" fill="#5e2e91" transform="rotate(-20 35 32)"/>
-      <ellipse cx="65" cy="32" rx="6" ry="10" fill="#5e2e91" transform="rotate(20 65 32)"/>
-      <!-- eyes -->
-      <circle cx="43" cy="42" r="3" fill="white"/>
-      <circle cx="57" cy="42" r="3" fill="white"/>
+      <ellipse cx="35" cy="32" rx="6" ry="10" fill="#4a1d8a" transform="rotate(-20 35 32)"/>
+      <ellipse cx="65" cy="32" rx="6" ry="10" fill="#4a1d8a" transform="rotate(20 65 32)"/>
+      <!-- tiny stars sprinkled on fur -->
+      <circle cx="42" cy="68" r="0.8" fill="#ffffff" opacity="0.9"/>
+      <circle cx="58" cy="74" r="1" fill="#ffd84a" opacity="0.9"/>
+      <circle cx="50" cy="78" r="0.7" fill="#2ee6c8" opacity="0.9"/>
+      <circle cx="40" cy="38" r="0.8" fill="#ffffff" opacity="0.85"/>
+      <circle cx="60" cy="33" r="1" fill="#ffd84a" opacity="0.85"/>
+      <circle cx="55" cy="48" r="0.7" fill="#2ee6c8" opacity="0.9"/>
+      <!-- glowing eyes -->
+      <circle cx="43" cy="42" r="3.4" fill="#2ee6c8"/>
+      <circle cx="57" cy="42" r="3.4" fill="#2ee6c8"/>
       <circle cx="43" cy="43" r="1.5" fill="#15101e"/>
       <circle cx="57" cy="43" r="1.5" fill="#15101e"/>
-      <!-- nose -->
-      <ellipse cx="50" cy="50" rx="3" ry="2" fill="#ff4fbf"/>
-      <!-- mouth -->
-      <path d="M47,54 Q50,56 53,54" stroke="#15101e" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+      <!-- nose + mouth -->
+      <ellipse cx="50" cy="51" rx="3" ry="2" fill="#ff4fbf"/>
+      <path d="M47,55 Q50,57 53,55" stroke="#15101e" stroke-width="1.5" fill="none" stroke-linecap="round"/>
     </svg>`,
 
-  // STAGE 3: 2-headed puppy
+  // STAGE 3: 2-headed puppy — galaxy
   3: `
     <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-      <ellipse cx="50" cy="74" rx="28" ry="14" fill="#7a3eb8"/>
-      <rect x="30" y="80" width="6" height="12" rx="2" fill="#7a3eb8"/>
-      <rect x="64" y="80" width="6" height="12" rx="2" fill="#7a3eb8"/>
+      <defs>
+        <radialGradient id="pup2Body" cx="40%" cy="30%" r="80%">
+          <stop offset="0%" stop-color="#c87aff"/>
+          <stop offset="60%" stop-color="#6b2bc4"/>
+          <stop offset="100%" stop-color="#1e1a55"/>
+        </radialGradient>
+        <radialGradient id="pup2Head" cx="40%" cy="30%" r="80%">
+          <stop offset="0%" stop-color="#ff8fd6"/>
+          <stop offset="60%" stop-color="#a04bd6"/>
+          <stop offset="100%" stop-color="#2a1f6b"/>
+        </radialGradient>
+      </defs>
+      <ellipse cx="50" cy="74" rx="28" ry="14" fill="url(#pup2Body)"/>
+      <rect x="30" y="80" width="6" height="12" rx="2" fill="#6b2bc4"/>
+      <rect x="64" y="80" width="6" height="12" rx="2" fill="#6b2bc4"/>
       <!-- left head -->
-      <circle cx="35" cy="46" r="16" fill="#9655d6"/>
-      <ellipse cx="24" cy="36" rx="5" ry="8" fill="#5e2e91" transform="rotate(-20 24 36)"/>
-      <circle cx="30" cy="46" r="2.5" fill="white"/><circle cx="30" cy="47" r="1.2" fill="#15101e"/>
-      <circle cx="40" cy="46" r="2.5" fill="white"/><circle cx="40" cy="47" r="1.2" fill="#15101e"/>
+      <circle cx="35" cy="46" r="16" fill="url(#pup2Head)"/>
+      <ellipse cx="24" cy="36" rx="5" ry="8" fill="#4a1d8a" transform="rotate(-20 24 36)"/>
+      <circle cx="30" cy="46" r="2.7" fill="#2ee6c8"/><circle cx="30" cy="47" r="1.2" fill="#15101e"/>
+      <circle cx="40" cy="46" r="2.7" fill="#2ee6c8"/><circle cx="40" cy="47" r="1.2" fill="#15101e"/>
       <ellipse cx="35" cy="53" rx="2.5" ry="1.6" fill="#ff4fbf"/>
       <!-- right head -->
-      <circle cx="65" cy="46" r="16" fill="#9655d6"/>
-      <ellipse cx="76" cy="36" rx="5" ry="8" fill="#5e2e91" transform="rotate(20 76 36)"/>
-      <circle cx="60" cy="46" r="2.5" fill="white"/><circle cx="60" cy="47" r="1.2" fill="#15101e"/>
-      <circle cx="70" cy="46" r="2.5" fill="white"/><circle cx="70" cy="47" r="1.2" fill="#15101e"/>
+      <circle cx="65" cy="46" r="16" fill="url(#pup2Head)"/>
+      <ellipse cx="76" cy="36" rx="5" ry="8" fill="#4a1d8a" transform="rotate(20 76 36)"/>
+      <circle cx="60" cy="46" r="2.7" fill="#2ee6c8"/><circle cx="60" cy="47" r="1.2" fill="#15101e"/>
+      <circle cx="70" cy="46" r="2.7" fill="#2ee6c8"/><circle cx="70" cy="47" r="1.2" fill="#15101e"/>
       <ellipse cx="65" cy="53" rx="2.5" ry="1.6" fill="#ff4fbf"/>
+      <!-- twinkles on body & heads -->
+      <circle cx="42" cy="70" r="0.9" fill="#ffffff" opacity="0.9"/>
+      <circle cx="58" cy="76" r="1" fill="#ffd84a" opacity="0.9"/>
+      <circle cx="50" cy="80" r="0.7" fill="#2ee6c8" opacity="0.9"/>
+      <circle cx="28" cy="40" r="0.7" fill="#ffd84a" opacity="0.9"/>
+      <circle cx="72" cy="40" r="0.7" fill="#ffffff" opacity="0.9"/>
+      <circle cx="50" cy="55" r="0.6" fill="#2ee6c8" opacity="0.9"/>
     </svg>`,
 
-  // STAGE 4: 3-headed puppy
+  // STAGE 4: 3-headed puppy — galaxy
   4: `
     <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-      <ellipse cx="50" cy="78" rx="32" ry="14" fill="#7a3eb8"/>
-      <rect x="28" y="84" width="6" height="12" rx="2" fill="#7a3eb8"/>
-      <rect x="66" y="84" width="6" height="12" rx="2" fill="#7a3eb8"/>
+      <defs>
+        <radialGradient id="pup3Body" cx="40%" cy="30%" r="80%">
+          <stop offset="0%" stop-color="#c87aff"/>
+          <stop offset="60%" stop-color="#6b2bc4"/>
+          <stop offset="100%" stop-color="#1e1a55"/>
+        </radialGradient>
+        <radialGradient id="pup3Head" cx="40%" cy="30%" r="80%">
+          <stop offset="0%" stop-color="#ff8fd6"/>
+          <stop offset="60%" stop-color="#a04bd6"/>
+          <stop offset="100%" stop-color="#2a1f6b"/>
+        </radialGradient>
+        <radialGradient id="pup3HeadMid" cx="40%" cy="30%" r="80%">
+          <stop offset="0%" stop-color="#ffb4e0"/>
+          <stop offset="60%" stop-color="#b463e5"/>
+          <stop offset="100%" stop-color="#2a1f6b"/>
+        </radialGradient>
+      </defs>
+      <ellipse cx="50" cy="78" rx="32" ry="14" fill="url(#pup3Body)"/>
+      <rect x="28" y="84" width="6" height="12" rx="2" fill="#6b2bc4"/>
+      <rect x="66" y="84" width="6" height="12" rx="2" fill="#6b2bc4"/>
       <!-- left head -->
-      <circle cx="26" cy="52" r="14" fill="#9655d6"/>
-      <ellipse cx="17" cy="44" rx="4" ry="7" fill="#5e2e91" transform="rotate(-25 17 44)"/>
-      <circle cx="22" cy="52" r="2" fill="white"/><circle cx="22" cy="53" r="1" fill="#15101e"/>
-      <circle cx="30" cy="52" r="2" fill="white"/><circle cx="30" cy="53" r="1" fill="#15101e"/>
+      <circle cx="26" cy="52" r="14" fill="url(#pup3Head)"/>
+      <ellipse cx="17" cy="44" rx="4" ry="7" fill="#4a1d8a" transform="rotate(-25 17 44)"/>
+      <circle cx="22" cy="52" r="2.3" fill="#2ee6c8"/><circle cx="22" cy="53" r="1" fill="#15101e"/>
+      <circle cx="30" cy="52" r="2.3" fill="#2ee6c8"/><circle cx="30" cy="53" r="1" fill="#15101e"/>
       <ellipse cx="26" cy="58" rx="2" ry="1.4" fill="#ff4fbf"/>
       <!-- middle head -->
-      <circle cx="50" cy="42" r="16" fill="#a463e5"/>
-      <ellipse cx="40" cy="32" rx="5" ry="8" fill="#5e2e91" transform="rotate(-20 40 32)"/>
-      <ellipse cx="60" cy="32" rx="5" ry="8" fill="#5e2e91" transform="rotate(20 60 32)"/>
-      <circle cx="44" cy="42" r="2.5" fill="white"/><circle cx="44" cy="43" r="1.2" fill="#15101e"/>
-      <circle cx="56" cy="42" r="2.5" fill="white"/><circle cx="56" cy="43" r="1.2" fill="#15101e"/>
+      <circle cx="50" cy="42" r="16" fill="url(#pup3HeadMid)"/>
+      <ellipse cx="40" cy="32" rx="5" ry="8" fill="#4a1d8a" transform="rotate(-20 40 32)"/>
+      <ellipse cx="60" cy="32" rx="5" ry="8" fill="#4a1d8a" transform="rotate(20 60 32)"/>
+      <circle cx="44" cy="42" r="2.7" fill="#2ee6c8"/><circle cx="44" cy="43" r="1.2" fill="#15101e"/>
+      <circle cx="56" cy="42" r="2.7" fill="#2ee6c8"/><circle cx="56" cy="43" r="1.2" fill="#15101e"/>
       <ellipse cx="50" cy="49" rx="2.5" ry="1.6" fill="#ff4fbf"/>
       <!-- right head -->
-      <circle cx="74" cy="52" r="14" fill="#9655d6"/>
-      <ellipse cx="83" cy="44" rx="4" ry="7" fill="#5e2e91" transform="rotate(25 83 44)"/>
-      <circle cx="70" cy="52" r="2" fill="white"/><circle cx="70" cy="53" r="1" fill="#15101e"/>
-      <circle cx="78" cy="52" r="2" fill="white"/><circle cx="78" cy="53" r="1" fill="#15101e"/>
+      <circle cx="74" cy="52" r="14" fill="url(#pup3Head)"/>
+      <ellipse cx="83" cy="44" rx="4" ry="7" fill="#4a1d8a" transform="rotate(25 83 44)"/>
+      <circle cx="70" cy="52" r="2.3" fill="#2ee6c8"/><circle cx="70" cy="53" r="1" fill="#15101e"/>
+      <circle cx="78" cy="52" r="2.3" fill="#2ee6c8"/><circle cx="78" cy="53" r="1" fill="#15101e"/>
       <ellipse cx="74" cy="58" rx="2" ry="1.4" fill="#ff4fbf"/>
+      <!-- star sprinkles -->
+      <circle cx="40" cy="74" r="0.9" fill="#ffffff" opacity="0.9"/>
+      <circle cx="60" cy="80" r="1" fill="#ffd84a" opacity="0.9"/>
+      <circle cx="50" cy="84" r="0.7" fill="#2ee6c8" opacity="0.9"/>
+      <circle cx="22" cy="58" r="0.7" fill="#ffd84a" opacity="0.9"/>
+      <circle cx="78" cy="58" r="0.7" fill="#ffffff" opacity="0.9"/>
+      <circle cx="50" cy="36" r="0.6" fill="#ffd84a" opacity="0.9"/>
+      <circle cx="32" cy="48" r="0.6" fill="#ffffff" opacity="0.85"/>
+      <circle cx="68" cy="48" r="0.6" fill="#ffffff" opacity="0.85"/>
     </svg>`,
 
-  // STAGE 5: Big 3-headed Cerberus (final form)
+  // STAGE 5: Big 3-headed Cerberus — full galaxy mode (final form)
   5: `
     <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <radialGradient id="cerbBody" cx="40%" cy="30%" r="80%">
+          <stop offset="0%" stop-color="#c87aff"/>
+          <stop offset="55%" stop-color="#5a2bb0"/>
+          <stop offset="100%" stop-color="#0e0a40"/>
+        </radialGradient>
+        <radialGradient id="cerbHead" cx="40%" cy="25%" r="80%">
+          <stop offset="0%" stop-color="#ff8fd6"/>
+          <stop offset="55%" stop-color="#7a3eb8"/>
+          <stop offset="100%" stop-color="#1e1a55"/>
+        </radialGradient>
+        <radialGradient id="cerbHeadMid" cx="40%" cy="25%" r="80%">
+          <stop offset="0%" stop-color="#ffb4e0"/>
+          <stop offset="55%" stop-color="#9655d6"/>
+          <stop offset="100%" stop-color="#1e1a55"/>
+        </radialGradient>
+      </defs>
       <!-- shadow / glow -->
-      <ellipse cx="50" cy="90" rx="36" ry="4" fill="#ff4fbf" opacity="0.25"/>
+      <ellipse cx="50" cy="90" rx="36" ry="4" fill="#ff4fbf" opacity="0.3"/>
       <!-- body -->
-      <ellipse cx="50" cy="72" rx="36" ry="18" fill="#5e2e91"/>
-      <!-- legs -->
-      <rect x="22" y="80" width="8" height="16" rx="2" fill="#5e2e91"/>
-      <rect x="70" y="80" width="8" height="16" rx="2" fill="#5e2e91"/>
-      <!-- tail -->
-      <path d="M82,70 Q92,60 90,50" stroke="#5e2e91" stroke-width="5" fill="none" stroke-linecap="round"/>
+      <ellipse cx="50" cy="72" rx="36" ry="18" fill="url(#cerbBody)"/>
+      <rect x="22" y="80" width="8" height="16" rx="2" fill="#3d1d61"/>
+      <rect x="70" y="80" width="8" height="16" rx="2" fill="#3d1d61"/>
+      <path d="M82,70 Q92,60 90,50" stroke="#5a2bb0" stroke-width="5" fill="none" stroke-linecap="round"/>
       <!-- left head -->
-      <circle cx="22" cy="46" r="16" fill="#7a3eb8"/>
+      <circle cx="22" cy="46" r="16" fill="url(#cerbHead)"/>
       <ellipse cx="12" cy="36" rx="5" ry="9" fill="#3d1d61" transform="rotate(-25 12 36)"/>
-      <circle cx="18" cy="46" r="3" fill="#ff4fbf"/><circle cx="18" cy="46" r="1.4" fill="#15101e"/>
-      <circle cx="26" cy="46" r="3" fill="#ff4fbf"/><circle cx="26" cy="46" r="1.4" fill="#15101e"/>
+      <circle cx="18" cy="46" r="3.2" fill="#ff4fbf"/><circle cx="18" cy="46" r="1.4" fill="#15101e"/>
+      <circle cx="26" cy="46" r="3.2" fill="#ff4fbf"/><circle cx="26" cy="46" r="1.4" fill="#15101e"/>
       <path d="M16,54 L20,57 L24,54 L28,57" stroke="#15101e" stroke-width="1.5" fill="none"/>
-      <!-- middle head (bigger) -->
-      <circle cx="50" cy="34" r="20" fill="#9655d6"/>
+      <!-- middle head -->
+      <circle cx="50" cy="34" r="20" fill="url(#cerbHeadMid)"/>
       <ellipse cx="38" cy="22" rx="6" ry="10" fill="#3d1d61" transform="rotate(-20 38 22)"/>
       <ellipse cx="62" cy="22" rx="6" ry="10" fill="#3d1d61" transform="rotate(20 62 22)"/>
-      <circle cx="43" cy="34" r="3.5" fill="#2ee6c8"/><circle cx="43" cy="34" r="1.6" fill="#15101e"/>
-      <circle cx="57" cy="34" r="3.5" fill="#2ee6c8"/><circle cx="57" cy="34" r="1.6" fill="#15101e"/>
+      <circle cx="43" cy="34" r="3.7" fill="#2ee6c8"/><circle cx="43" cy="34" r="1.6" fill="#15101e"/>
+      <circle cx="57" cy="34" r="3.7" fill="#2ee6c8"/><circle cx="57" cy="34" r="1.6" fill="#15101e"/>
       <ellipse cx="50" cy="44" rx="3" ry="2" fill="#ff4fbf"/>
       <path d="M42,50 L46,54 L50,50 L54,54 L58,50" stroke="#15101e" stroke-width="2" fill="none"/>
       <!-- right head -->
-      <circle cx="78" cy="46" r="16" fill="#7a3eb8"/>
+      <circle cx="78" cy="46" r="16" fill="url(#cerbHead)"/>
       <ellipse cx="88" cy="36" rx="5" ry="9" fill="#3d1d61" transform="rotate(25 88 36)"/>
-      <circle cx="74" cy="46" r="3" fill="#ff4fbf"/><circle cx="74" cy="46" r="1.4" fill="#15101e"/>
-      <circle cx="82" cy="46" r="3" fill="#ff4fbf"/><circle cx="82" cy="46" r="1.4" fill="#15101e"/>
+      <circle cx="74" cy="46" r="3.2" fill="#ff4fbf"/><circle cx="74" cy="46" r="1.4" fill="#15101e"/>
+      <circle cx="82" cy="46" r="3.2" fill="#ff4fbf"/><circle cx="82" cy="46" r="1.4" fill="#15101e"/>
       <path d="M72,54 L76,57 L80,54 L84,57" stroke="#15101e" stroke-width="1.5" fill="none"/>
+      <!-- galaxy star sprinkles all over -->
+      <circle cx="35" cy="70" r="1" fill="#ffffff" opacity="0.95"/>
+      <circle cx="65" cy="68" r="1.2" fill="#ffd84a" opacity="0.9"/>
+      <circle cx="50" cy="78" r="0.9" fill="#2ee6c8" opacity="0.95"/>
+      <circle cx="20" cy="78" r="0.8" fill="#ffffff" opacity="0.85"/>
+      <circle cx="80" cy="76" r="0.8" fill="#ffd84a" opacity="0.9"/>
+      <circle cx="48" cy="66" r="0.7" fill="#ffffff" opacity="0.85"/>
+      <circle cx="20" cy="40" r="0.8" fill="#ffd84a" opacity="0.9"/>
+      <circle cx="80" cy="40" r="0.8" fill="#ffffff" opacity="0.9"/>
+      <circle cx="50" cy="28" r="0.8" fill="#ffd84a" opacity="0.9"/>
+      <circle cx="40" cy="38" r="0.6" fill="#ffffff" opacity="0.85"/>
+      <circle cx="60" cy="38" r="0.6" fill="#ffffff" opacity="0.85"/>
     </svg>`,
 };
 
@@ -799,32 +920,42 @@ function render() {
 }
 
 // ----- BISCUIT -----
-// A round chocolate-chip biscuit. We use one full-colour SVG and apply
-// a CSS grayscale filter that fades out as Penny earns XP toward her
-// next evolution. At 0% progress: black-and-white. At 100%: full colour.
+// A round chocolate-chip biscuit with a cute little face. We use one
+// full-colour SVG and apply a CSS grayscale filter that fades out as
+// Penny earns XP toward her next evolution.
 const BISCUIT_SVG = `
   <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-    <!-- biscuit body -->
-    <circle cx="50" cy="50" r="42" fill="#d6a55a" stroke="#8a5a1f" stroke-width="2"/>
-    <circle cx="50" cy="50" r="42" fill="url(#crumbs)" opacity="0.5"/>
     <defs>
-      <radialGradient id="crumbs">
-        <stop offset="0%" stop-color="#f0c47a"/>
+      <radialGradient id="crumbs" cx="40%" cy="35%">
+        <stop offset="0%" stop-color="#f8d490"/>
         <stop offset="100%" stop-color="#b8853d"/>
       </radialGradient>
     </defs>
-    <!-- chocolate chips -->
-    <ellipse cx="32" cy="35" rx="6" ry="5" fill="#4a2412"/>
-    <ellipse cx="62" cy="30" rx="5" ry="4" fill="#4a2412"/>
-    <ellipse cx="70" cy="58" rx="6" ry="5" fill="#4a2412"/>
-    <ellipse cx="40" cy="62" rx="5" ry="4" fill="#4a2412"/>
-    <ellipse cx="50" cy="48" rx="4" ry="3" fill="#4a2412"/>
-    <ellipse cx="28" cy="68" rx="4" ry="3" fill="#4a2412"/>
+    <!-- biscuit body -->
+    <circle cx="50" cy="50" r="42" fill="url(#crumbs)" stroke="#8a5a1f" stroke-width="2.5"/>
+    <!-- chocolate chip "eyes" + a few decorative chips -->
+    <ellipse cx="36" cy="42" rx="5" ry="4.5" fill="#4a2412"/>
+    <ellipse cx="64" cy="42" rx="5" ry="4.5" fill="#4a2412"/>
+    <!-- eye shine -->
+    <circle cx="34.5" cy="40.5" r="1.2" fill="#ffffff" opacity="0.9"/>
+    <circle cx="62.5" cy="40.5" r="1.2" fill="#ffffff" opacity="0.9"/>
+    <!-- happy mouth -->
+    <path d="M 38,62 Q 50,72 62,62" stroke="#4a2412" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+    <!-- pink blush -->
+    <ellipse cx="26" cy="58" rx="5" ry="3" fill="#ff8fb8" opacity="0.65"/>
+    <ellipse cx="74" cy="58" rx="5" ry="3" fill="#ff8fb8" opacity="0.65"/>
+    <!-- extra chocolate chips -->
+    <ellipse cx="22" cy="32" rx="3" ry="2.5" fill="#4a2412"/>
+    <ellipse cx="78" cy="30" rx="3" ry="2.5" fill="#4a2412"/>
+    <ellipse cx="50" cy="26" rx="3" ry="2.2" fill="#4a2412"/>
+    <ellipse cx="28" cy="76" rx="3" ry="2" fill="#4a2412"/>
+    <ellipse cx="72" cy="76" rx="3" ry="2" fill="#4a2412"/>
     <!-- neon sprinkles -->
-    <rect x="55" y="42" width="6" height="2" rx="1" fill="#ff4fbf" transform="rotate(20 58 43)"/>
-    <rect x="20" y="50" width="6" height="2" rx="1" fill="#2ee6c8" transform="rotate(-30 23 51)"/>
-    <rect x="65" y="70" width="6" height="2" rx="1" fill="#b14bff" transform="rotate(45 68 71)"/>
-    <rect x="38" y="26" width="6" height="2" rx="1" fill="#ffd84a" transform="rotate(-15 41 27)"/>
+    <rect x="46" y="50" width="6" height="2" rx="1" fill="#ff4fbf" transform="rotate(25 49 51)"/>
+    <rect x="18" y="48" width="5" height="2" rx="1" fill="#2ee6c8" transform="rotate(-30 20 49)"/>
+    <rect x="77" y="50" width="5" height="2" rx="1" fill="#b14bff" transform="rotate(35 79 51)"/>
+    <rect x="38" y="32" width="5" height="2" rx="1" fill="#ffd84a" transform="rotate(-15 40 33)"/>
+    <rect x="58" y="78" width="5" height="2" rx="1" fill="#2ee6c8" transform="rotate(45 60 79)"/>
   </svg>`;
 
 function renderBiscuit() {
@@ -1014,21 +1145,62 @@ function spawnSymbols(symbols, count, big) {
   }
 }
 
-// Cinematic evolution animation: shake the pet, flash the habitat,
-// rain down sparkles. Called from render() the instant stage changes.
+// Cinematic evolution animation: spawn a flying biscuit that Penny chomps,
+// then shake the pet, flash the habitat, and rain down sparkles.
 function playEvolutionAnimation() {
-  petStageEl.classList.remove("evolving");
-  void petStageEl.offsetWidth;
-  petStageEl.classList.add("evolving");
-  setTimeout(() => petStageEl.classList.remove("evolving"), 1400);
+  // 1) Biscuit flies in from the right and gets eaten
+  spawnFlyingBiscuit();
 
-  habitatEl.classList.remove("flash");
-  void habitatEl.offsetWidth;
-  habitatEl.classList.add("flash");
-  setTimeout(() => habitatEl.classList.remove("flash"), 900);
+  // 2) Chomp partway through the biscuit's flight
+  setTimeout(() => {
+    petStageEl.classList.remove("chomp");
+    void petStageEl.offsetWidth;
+    petStageEl.classList.add("chomp");
+    setTimeout(() => petStageEl.classList.remove("chomp"), 350);
+  }, 700);
 
-  showerSparkles(16);
+  // 3) After the biscuit is gone, the dramatic hatch pop + flash + sparkles
+  setTimeout(() => {
+    petStageEl.classList.remove("evolving");
+    void petStageEl.offsetWidth;
+    petStageEl.classList.add("evolving");
+    setTimeout(() => petStageEl.classList.remove("evolving"), 1400);
+
+    habitatEl.classList.remove("flash");
+    void habitatEl.offsetWidth;
+    habitatEl.classList.add("flash");
+    setTimeout(() => habitatEl.classList.remove("flash"), 900);
+
+    showerSparkles(16);
+  }, 1100);
 }
+
+// Spawn a small biscuit element that flies from the right edge of the
+// habitat toward Penny's mouth, then shrinks and fades as she chomps it.
+function spawnFlyingBiscuit() {
+  const biscuit = document.createElement("div");
+  biscuit.className = "eating-biscuit";
+  biscuit.innerHTML = BISCUIT_SVG;
+  habitatEl.appendChild(biscuit);
+  biscuit.addEventListener("animationend", () => biscuit.remove());
+}
+
+// ----- AMBIENT STARS in the habitat (galaxy mood) -----
+function setupAmbientStars() {
+  const symbols = ["✦", "✧", "⋆", "✶", "·"];
+  for (let i = 0; i < 12; i++) {
+    const star = document.createElement("span");
+    star.className = "ambient-star";
+    star.textContent = symbols[Math.floor(Math.random() * symbols.length)];
+    star.style.top = (5 + Math.random() * 90) + "%";
+    star.style.left = (3 + Math.random() * 94) + "%";
+    star.style.fontSize = (8 + Math.random() * 10) + "px";
+    star.style.animationDelay = (Math.random() * 4) + "s";
+    star.style.animationDuration = (2.5 + Math.random() * 2.5) + "s";
+    habitatEl.appendChild(star);
+  }
+}
+setupAmbientStars();
 
 // ----- PAGINATION BUTTON WIRING -----
 document.getElementById("activePrev").addEventListener("click", () => { activePage = Math.max(0, activePage - 1); render(); });
