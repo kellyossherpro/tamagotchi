@@ -274,9 +274,10 @@ function deleteTodo(id) {
 }
 
 // ----- PAGINATION -----
-// How many tasks per page in each list. Kept small so the whole app fits
-// on a laptop screen without scrolling.
-const PAGE_SIZE = 5;
+// Active to-do list pages every 10 items; the completed list (which is
+// collapsed by default and lives in a narrower column) pages every 5.
+const ACTIVE_PAGE_SIZE = 10;
+const DONE_PAGE_SIZE   = 5;
 // In-memory only — paging doesn't need to survive a reload.
 let activePage = 0;
 let donePage = 0;
@@ -533,12 +534,12 @@ function render() {
   const allDone   = state.todos.filter(t => t.done);
 
   // Pagination: clamp pages to valid range, then slice for rendering.
-  const activePages = Math.max(1, Math.ceil(allActive.length / PAGE_SIZE));
-  const donePages   = Math.max(1, Math.ceil(allDone.length   / PAGE_SIZE));
+  const activePages = Math.max(1, Math.ceil(allActive.length / ACTIVE_PAGE_SIZE));
+  const donePages   = Math.max(1, Math.ceil(allDone.length   / DONE_PAGE_SIZE));
   activePage = Math.min(activePage, activePages - 1);
   donePage   = Math.min(donePage,   donePages   - 1);
-  const activeTodos = allActive.slice(activePage * PAGE_SIZE, (activePage + 1) * PAGE_SIZE);
-  const doneTodos   = allDone.slice(donePage   * PAGE_SIZE, (donePage   + 1) * PAGE_SIZE);
+  const activeTodos = allActive.slice(activePage * ACTIVE_PAGE_SIZE, (activePage + 1) * ACTIVE_PAGE_SIZE);
+  const doneTodos   = allDone.slice(donePage   * DONE_PAGE_SIZE,   (donePage   + 1) * DONE_PAGE_SIZE);
 
   // Render the pager controls (or hide them if only one page).
   updatePager("activePager", "activePrev", "activeNext", "activePageInfo", activePage, activePages);
@@ -664,6 +665,7 @@ function render() {
 
   document.getElementById("emptyMsg").classList.toggle("hidden", allActive.length > 0);
   document.getElementById("doneEmptyMsg").classList.toggle("hidden", allDone.length > 0);
+  document.getElementById("doneCount").textContent = `(${allDone.length})`;
 
   // Death overlay
   const overlay = document.getElementById("deathOverlay");
@@ -968,6 +970,15 @@ function setupAmbientStars() {
   });
 }
 setupAmbientStars();
+
+// ----- DONE PANEL TOGGLE -----
+document.getElementById("doneToggle").addEventListener("click", () => {
+  const panel = document.getElementById("donePanel");
+  const toggle = document.getElementById("doneToggle");
+  const isClosed = panel.classList.toggle("hidden");
+  toggle.setAttribute("aria-expanded", isClosed ? "false" : "true");
+  toggle.classList.toggle("open", !isClosed);
+});
 
 // ----- PAGINATION BUTTON WIRING -----
 document.getElementById("activePrev").addEventListener("click", () => { activePage = Math.max(0, activePage - 1); render(); });

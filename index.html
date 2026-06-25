@@ -105,19 +105,25 @@
           </div>
         </section>
 
-        <!-- RIGHT COLUMN: biscuit + completed tasks -->
+        <!-- RIGHT COLUMN: biscuit + completed tasks (collapsible) -->
         <aside class="completed-pane">
           <div class="biscuit-wrap" title="Penny's biscuit. Fills with colour as you earn XP toward the next evolution.">
             <div class="biscuit" id="biscuit"></div>
             <p class="biscuit-caption" id="biscuitCaption">0 / 30 XP to Blob</p>
           </div>
-          <h3 class="section-title">Done</h3>
-          <ul id="doneList"></ul>
-          <p id="doneEmptyMsg" class="empty small">Nothing finished yet.</p>
-          <div class="pager hidden" id="donePager">
-            <button class="page-btn" id="donePrev" title="Previous page">‹</button>
-            <span class="page-info" id="donePageInfo">1 / 1</span>
-            <button class="page-btn" id="doneNext" title="Next page">›</button>
+          <button id="doneToggle" class="done-toggle" aria-expanded="false">
+            <span class="done-chevron">▶</span>
+            <span class="section-title">Done</span>
+            <span class="done-count" id="doneCount">(0)</span>
+          </button>
+          <div id="donePanel" class="done-panel hidden">
+            <ul id="doneList"></ul>
+            <p id="doneEmptyMsg" class="empty small">Nothing finished yet.</p>
+            <div class="pager hidden" id="donePager">
+              <button class="page-btn" id="donePrev" title="Previous page">‹</button>
+              <span class="page-info" id="donePageInfo">1 / 1</span>
+              <button class="page-btn" id="doneNext" title="Next page">›</button>
+            </div>
           </div>
         </aside>
       </div>
