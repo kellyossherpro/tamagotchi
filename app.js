@@ -444,16 +444,342 @@ function promptForName() {
 //    Ask AI: "redraw stage 4 to give it bigger ears" or similar.
 // ============================================================
 
-// Each stage now renders as a real PNG image. The animations (jiggle,
-// chomp, hatchPop, evolution flash) animate the .pet-stage div, so they
-// work on the <img> just as they did on the inline SVG.
+// A small helper to build a stage's SVG string.
+// Using bright neon colors so they pop on the dark background.
 const SVGS = {
-  0: `<img src="stage_0_egg.png" alt="Egg" draggable="false" />`,
-  1: `<img src="stage_1_blob.png" alt="Blob" draggable="false" />`,
-  2: `<img src="stage_2_pup1.png" alt="1-headed pup" draggable="false" />`,
-  3: `<img src="stage_3_pup2.png" alt="2-headed pup" draggable="false" />`,
-  4: `<img src="stage_4_pup3.png" alt="3-headed pup" draggable="false" />`,
-  5: `<img src="stage_5_cerberus.png" alt="Big Cerberus" draggable="false" />`,
+  // STAGE 0: Egg
+  0: `
+    <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+      <ellipse cx="50" cy="55" rx="28" ry="36" fill="#f3e9d2" stroke="#b14bff" stroke-width="2"/>
+      <circle cx="40" cy="45" r="3" fill="#b14bff"/>
+      <circle cx="60" cy="60" r="2.5" fill="#ff4fbf"/>
+      <circle cx="52" cy="35" r="2" fill="#2ee6c8"/>
+      <ellipse cx="35" cy="70" rx="3" ry="2" fill="#b14bff" opacity="0.6"/>
+    </svg>`,
+
+  // STAGE 1: Blob — galaxy edition (cosmic purple → magenta with inner stars + blush)
+  1: `
+    <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <radialGradient id="blobGalaxy" cx="38%" cy="32%" r="78%">
+          <stop offset="0%" stop-color="#ff8fd6"/>
+          <stop offset="35%" stop-color="#b14bff"/>
+          <stop offset="75%" stop-color="#5a2bb0"/>
+          <stop offset="100%" stop-color="#1e1a55"/>
+        </radialGradient>
+      </defs>
+      <!-- wobbly blob body with extra bumps -->
+      <path d="M 50,16
+               C 76,14 92,32 88,52
+               C 96,68 80,86 60,84
+               C 44,92 18,84 16,64
+               C 6,48 18,24 36,22
+               C 40,18 46,16 50,16 Z"
+            fill="url(#blobGalaxy)"
+            stroke="#ff4fbf" stroke-width="2"
+            filter="drop-shadow(0 0 6px rgba(177,75,255,.45))"/>
+      <!-- inner stars / cosmic sparkles -->
+      <circle cx="28" cy="40" r="1.4" fill="#ffffff" opacity="0.95"/>
+      <circle cx="68" cy="32" r="1" fill="#ffffff" opacity="0.85"/>
+      <circle cx="72" cy="62" r="1.5" fill="#ffd84a" opacity="0.9"/>
+      <circle cx="22" cy="62" r="1" fill="#2ee6c8" opacity="0.9"/>
+      <circle cx="55" cy="78" r="1.2" fill="#ffffff" opacity="0.8"/>
+      <circle cx="40" cy="28" r="0.8" fill="#2ee6c8" opacity="0.9"/>
+      <circle cx="80" cy="46" r="0.9" fill="#ffffff" opacity="0.8"/>
+      <!-- big cute eyes -->
+      <circle cx="38" cy="50" r="7" fill="#ffffff"/>
+      <circle cx="62" cy="50" r="7" fill="#ffffff"/>
+      <circle cx="38" cy="52" r="3.4" fill="#15101e"/>
+      <circle cx="62" cy="52" r="3.4" fill="#15101e"/>
+      <!-- twinkle reflections -->
+      <circle cx="36" cy="50" r="1.3" fill="#ffffff"/>
+      <circle cx="60" cy="50" r="1.3" fill="#ffffff"/>
+      <!-- blush -->
+      <ellipse cx="26" cy="60" rx="4" ry="2" fill="#ff4fbf" opacity="0.55"/>
+      <ellipse cx="74" cy="60" rx="4" ry="2" fill="#ff4fbf" opacity="0.55"/>
+      <!-- happy mouth -->
+      <path d="M 42,66 Q 50,73 58,66" stroke="#15101e" stroke-width="2.4" fill="none" stroke-linecap="round"/>
+    </svg>`,
+
+  // STAGE 2: 1-headed pup — kawaii galaxy chibi (pink/purple body, big sparkly eyes)
+  2: `
+    <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <radialGradient id="pup1Body" cx="40%" cy="30%" r="80%">
+          <stop offset="0%" stop-color="#ffc0e5"/>
+          <stop offset="55%" stop-color="#b14bff"/>
+          <stop offset="100%" stop-color="#3d1d61"/>
+        </radialGradient>
+        <radialGradient id="pup1Head" cx="40%" cy="25%" r="85%">
+          <stop offset="0%" stop-color="#ffd6f0"/>
+          <stop offset="55%" stop-color="#c87aff"/>
+          <stop offset="100%" stop-color="#4a1d8a"/>
+        </radialGradient>
+      </defs>
+      <!-- floating heart above -->
+      <path d="M 50,7 q -1.5,-2.5 -4,0 q 0,2.5 4,5 q 4,-2.5 4,-5 q -2.5,-2.5 -4,0" fill="#ff4fbf"/>
+      <!-- sparkles -->
+      <circle cx="18" cy="40" r="0.9" fill="#ffffff" opacity="0.9"/>
+      <circle cx="82" cy="42" r="0.9" fill="#ffd84a" opacity="0.9"/>
+      <circle cx="20" cy="68" r="0.7" fill="#2ee6c8" opacity="0.9"/>
+      <circle cx="80" cy="70" r="0.7" fill="#ffffff" opacity="0.9"/>
+      <!-- body -->
+      <ellipse cx="50" cy="72" rx="26" ry="14" fill="url(#pup1Body)"/>
+      <ellipse cx="50" cy="76" rx="14" ry="8" fill="#fff3df" opacity="0.95"/>
+      <!-- paw pads -->
+      <ellipse cx="34" cy="84" rx="5" ry="3" fill="#fff3df"/>
+      <ellipse cx="66" cy="84" rx="5" ry="3" fill="#fff3df"/>
+      <circle cx="34" cy="85" r="1.6" fill="#ff8fb8"/>
+      <circle cx="66" cy="85" r="1.6" fill="#ff8fb8"/>
+      <!-- fluffy white collar -->
+      <path d="M 30,62 Q 34,66 38,63 Q 42,67 46,63 Q 50,67 54,63 Q 58,67 62,63 Q 66,66 70,62 Q 64,73 50,74 Q 36,73 30,62 Z" fill="white"/>
+      <!-- head -->
+      <circle cx="50" cy="38" r="22" fill="url(#pup1Head)"/>
+      <!-- pointy ears -->
+      <path d="M 32,27 L 26,7 L 42,21 Z" fill="#9655d6"/>
+      <path d="M 35,21 L 32,11 L 40,20 Z" fill="#ff8fb8"/>
+      <path d="M 68,27 L 74,7 L 58,21 Z" fill="#9655d6"/>
+      <path d="M 65,21 L 68,11 L 60,20 Z" fill="#ff8fb8"/>
+      <!-- huge sparkly eyes -->
+      <ellipse cx="41" cy="38" rx="5.5" ry="7" fill="#15101e"/>
+      <circle cx="39" cy="35" r="2" fill="white"/>
+      <circle cx="43" cy="42" r="1" fill="white"/>
+      <ellipse cx="59" cy="38" rx="5.5" ry="7" fill="#15101e"/>
+      <circle cx="57" cy="35" r="2" fill="white"/>
+      <circle cx="61" cy="42" r="1" fill="white"/>
+      <!-- pink nose + smile -->
+      <ellipse cx="50" cy="48" rx="2.5" ry="1.8" fill="#ff4fbf"/>
+      <path d="M 45,53 Q 50,57 55,53" stroke="#15101e" stroke-width="1.6" fill="none" stroke-linecap="round"/>
+      <!-- blush -->
+      <circle cx="33" cy="46" r="3" fill="#ff8fb8" opacity="0.55"/>
+      <circle cx="67" cy="46" r="3" fill="#ff8fb8" opacity="0.55"/>
+    </svg>`,
+
+  // STAGE 3: 2-headed pup — left smiles (pink), right winks (blue)
+  3: `
+    <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <radialGradient id="pup2Body" cx="40%" cy="30%" r="80%">
+          <stop offset="0%" stop-color="#ffc0e5"/>
+          <stop offset="55%" stop-color="#b14bff"/>
+          <stop offset="100%" stop-color="#3d1d61"/>
+        </radialGradient>
+        <radialGradient id="pup2HeadPink" cx="40%" cy="25%" r="85%">
+          <stop offset="0%" stop-color="#ffd6f0"/>
+          <stop offset="55%" stop-color="#c87aff"/>
+          <stop offset="100%" stop-color="#4a1d8a"/>
+        </radialGradient>
+        <radialGradient id="pup2HeadBlue" cx="40%" cy="25%" r="85%">
+          <stop offset="0%" stop-color="#c8d8ff"/>
+          <stop offset="55%" stop-color="#7a8fff"/>
+          <stop offset="100%" stop-color="#2a2f80"/>
+        </radialGradient>
+      </defs>
+      <!-- floating heart + sparkles -->
+      <path d="M 50,7 q -1.5,-2.5 -4,0 q 0,2.5 4,5 q 4,-2.5 4,-5 q -2.5,-2.5 -4,0" fill="#ff4fbf"/>
+      <circle cx="14" cy="50" r="0.9" fill="#ffffff" opacity="0.9"/>
+      <circle cx="86" cy="50" r="0.9" fill="#ffd84a" opacity="0.9"/>
+      <circle cx="50" cy="30" r="0.7" fill="#2ee6c8" opacity="0.9"/>
+      <!-- body -->
+      <ellipse cx="50" cy="76" rx="32" ry="14" fill="url(#pup2Body)"/>
+      <ellipse cx="50" cy="80" rx="18" ry="8" fill="#fff3df" opacity="0.95"/>
+      <ellipse cx="30" cy="88" rx="5" ry="3" fill="#fff3df"/>
+      <ellipse cx="70" cy="88" rx="5" ry="3" fill="#fff3df"/>
+      <circle cx="30" cy="89" r="1.6" fill="#ff8fb8"/>
+      <circle cx="70" cy="89" r="1.6" fill="#ff8fb8"/>
+      <!-- collar -->
+      <path d="M 24,66 Q 28,70 33,67 Q 38,71 43,67 Q 48,71 53,67 Q 58,71 63,67 Q 68,71 72,67 Q 76,70 76,66 Q 72,76 50,77 Q 28,76 24,66 Z" fill="white"/>
+      <!-- LEFT head — pink, big happy smile -->
+      <circle cx="32" cy="42" r="18" fill="url(#pup2HeadPink)"/>
+      <path d="M 18,32 L 12,12 L 26,28 Z" fill="#9655d6"/>
+      <path d="M 21,26 L 18,15 L 25,25 Z" fill="#ff8fb8"/>
+      <ellipse cx="26" cy="42" rx="4" ry="5.5" fill="#15101e"/>
+      <circle cx="25" cy="40" r="1.4" fill="white"/>
+      <circle cx="27" cy="45" r="0.8" fill="white"/>
+      <ellipse cx="38" cy="42" rx="4" ry="5.5" fill="#15101e"/>
+      <circle cx="37" cy="40" r="1.4" fill="white"/>
+      <circle cx="39" cy="45" r="0.8" fill="white"/>
+      <ellipse cx="32" cy="50" rx="2" ry="1.4" fill="#ff4fbf"/>
+      <path d="M 27,55 Q 32,59 37,55" stroke="#15101e" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+      <circle cx="22" cy="48" r="2.5" fill="#ff8fb8" opacity="0.55"/>
+      <circle cx="42" cy="48" r="2.5" fill="#ff8fb8" opacity="0.55"/>
+      <!-- RIGHT head — blue, winking -->
+      <circle cx="68" cy="42" r="18" fill="url(#pup2HeadBlue)"/>
+      <path d="M 82,32 L 88,12 L 74,28 Z" fill="#5a5fc0"/>
+      <path d="M 79,26 L 82,15 L 75,25 Z" fill="#a8c7ff"/>
+      <ellipse cx="62" cy="42" rx="4" ry="5.5" fill="#15101e"/>
+      <circle cx="61" cy="40" r="1.4" fill="white"/>
+      <circle cx="63" cy="45" r="0.8" fill="white"/>
+      <path d="M 70,42 Q 75,39 80,43" stroke="#15101e" stroke-width="1.6" fill="none" stroke-linecap="round"/>
+      <ellipse cx="68" cy="50" rx="2" ry="1.4" fill="#ff4fbf"/>
+      <path d="M 63,55 Q 68,59 73,55" stroke="#15101e" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+      <circle cx="58" cy="48" r="2.5" fill="#ff8fb8" opacity="0.55"/>
+      <circle cx="78" cy="48" r="2.5" fill="#ff8fb8" opacity="0.55"/>
+    </svg>`,
+
+  // STAGE 4: 3-headed pup — blue winks, middle pink smiles big, right tongue out
+  4: `
+    <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <radialGradient id="pup3Body" cx="40%" cy="30%" r="80%">
+          <stop offset="0%" stop-color="#ffc0e5"/>
+          <stop offset="55%" stop-color="#b14bff"/>
+          <stop offset="100%" stop-color="#3d1d61"/>
+        </radialGradient>
+        <radialGradient id="pup3HeadPink" cx="40%" cy="25%" r="85%">
+          <stop offset="0%" stop-color="#ffd6f0"/>
+          <stop offset="55%" stop-color="#c87aff"/>
+          <stop offset="100%" stop-color="#4a1d8a"/>
+        </radialGradient>
+        <radialGradient id="pup3HeadBlue" cx="40%" cy="25%" r="85%">
+          <stop offset="0%" stop-color="#c8d8ff"/>
+          <stop offset="55%" stop-color="#7a8fff"/>
+          <stop offset="100%" stop-color="#2a2f80"/>
+        </radialGradient>
+      </defs>
+      <!-- floating hearts -->
+      <path d="M 50,5 q -1.5,-2.5 -4,0 q 0,2.5 4,5 q 4,-2.5 4,-5 q -2.5,-2.5 -4,0" fill="#ff4fbf"/>
+      <path d="M 14,28 q -1,-2 -3,0 q 0,2 3,3.5 q 3,-1.5 3,-3.5 q -2,-2 -3,0" fill="#ff4fbf" opacity="0.7"/>
+      <path d="M 86,28 q -1,-2 -3,0 q 0,2 3,3.5 q 3,-1.5 3,-3.5 q -2,-2 -3,0" fill="#ff4fbf" opacity="0.7"/>
+      <!-- body -->
+      <ellipse cx="50" cy="80" rx="34" ry="14" fill="url(#pup3Body)"/>
+      <ellipse cx="50" cy="84" rx="20" ry="7" fill="#fff3df" opacity="0.95"/>
+      <ellipse cx="28" cy="91" rx="5" ry="3" fill="#fff3df"/>
+      <ellipse cx="72" cy="91" rx="5" ry="3" fill="#fff3df"/>
+      <circle cx="28" cy="92" r="1.6" fill="#ff8fb8"/>
+      <circle cx="72" cy="92" r="1.6" fill="#ff8fb8"/>
+      <!-- collar -->
+      <path d="M 22,70 Q 26,74 31,71 Q 36,75 41,71 Q 46,75 50,71 Q 54,75 59,71 Q 64,75 69,71 Q 74,74 78,70 Q 74,80 50,81 Q 26,80 22,70 Z" fill="white"/>
+      <!-- LEFT head — blue, winking -->
+      <circle cx="24" cy="50" r="14" fill="url(#pup3HeadBlue)"/>
+      <path d="M 14,40 L 8,22 L 20,38 Z" fill="#5a5fc0"/>
+      <path d="M 16,36 L 14,26 L 19,35 Z" fill="#a8c7ff"/>
+      <path d="M 18,50 Q 22,47 26,51" stroke="#15101e" stroke-width="1.3" fill="none" stroke-linecap="round"/>
+      <ellipse cx="30" cy="50" rx="3" ry="4" fill="#15101e"/>
+      <circle cx="29" cy="48" r="1.1" fill="white"/>
+      <circle cx="31" cy="52" r="0.6" fill="white"/>
+      <ellipse cx="24" cy="57" rx="1.7" ry="1.2" fill="#ff4fbf"/>
+      <path d="M 21,61 Q 24,64 27,61" stroke="#15101e" stroke-width="1.2" fill="none" stroke-linecap="round"/>
+      <!-- MIDDLE head — pink, biggest, big smile -->
+      <circle cx="50" cy="40" r="17" fill="url(#pup3HeadPink)"/>
+      <path d="M 36,28 L 30,8 L 44,24 Z" fill="#9655d6"/>
+      <path d="M 39,22 L 36,12 L 43,21 Z" fill="#ff8fb8"/>
+      <path d="M 64,28 L 70,8 L 56,24 Z" fill="#9655d6"/>
+      <path d="M 61,22 L 64,12 L 57,21 Z" fill="#ff8fb8"/>
+      <ellipse cx="43" cy="40" rx="4" ry="5.5" fill="#15101e"/>
+      <circle cx="42" cy="38" r="1.4" fill="white"/>
+      <circle cx="44" cy="43" r="0.8" fill="white"/>
+      <ellipse cx="57" cy="40" rx="4" ry="5.5" fill="#15101e"/>
+      <circle cx="56" cy="38" r="1.4" fill="white"/>
+      <circle cx="58" cy="43" r="0.8" fill="white"/>
+      <ellipse cx="50" cy="48" rx="2.2" ry="1.6" fill="#ff4fbf"/>
+      <path d="M 45,53 Q 50,57 55,53" stroke="#15101e" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+      <circle cx="35" cy="46" r="2.5" fill="#ff8fb8" opacity="0.55"/>
+      <circle cx="65" cy="46" r="2.5" fill="#ff8fb8" opacity="0.55"/>
+      <!-- RIGHT head — blue, tongue out (mlem!) -->
+      <circle cx="76" cy="50" r="14" fill="url(#pup3HeadBlue)"/>
+      <path d="M 86,40 L 92,22 L 80,38 Z" fill="#5a5fc0"/>
+      <path d="M 84,36 L 86,26 L 81,35 Z" fill="#a8c7ff"/>
+      <ellipse cx="70" cy="50" rx="3" ry="4" fill="#15101e"/>
+      <circle cx="69" cy="48" r="1.1" fill="white"/>
+      <circle cx="71" cy="52" r="0.6" fill="white"/>
+      <ellipse cx="82" cy="50" rx="3" ry="4" fill="#15101e"/>
+      <circle cx="81" cy="48" r="1.1" fill="white"/>
+      <circle cx="83" cy="52" r="0.6" fill="white"/>
+      <ellipse cx="76" cy="57" rx="1.7" ry="1.2" fill="#ff4fbf"/>
+      <!-- mouth + tongue -->
+      <path d="M 73,61 Q 76,63 79,61" stroke="#15101e" stroke-width="1.2" fill="none" stroke-linecap="round"/>
+      <path d="M 76,62 Q 76,68 79,68 Q 80,65 78,62 Z" fill="#ff8fb8"/>
+    </svg>`,
+
+  // STAGE 5: Big 3-headed Cerberus — final form, kawaii galaxy + crescent moon halo
+  5: `
+    <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <radialGradient id="cerbBody" cx="40%" cy="30%" r="80%">
+          <stop offset="0%" stop-color="#ffc0e5"/>
+          <stop offset="55%" stop-color="#b14bff"/>
+          <stop offset="100%" stop-color="#3d1d61"/>
+        </radialGradient>
+        <radialGradient id="cerbHeadPink" cx="40%" cy="25%" r="85%">
+          <stop offset="0%" stop-color="#ffd6f0"/>
+          <stop offset="55%" stop-color="#c87aff"/>
+          <stop offset="100%" stop-color="#4a1d8a"/>
+        </radialGradient>
+        <radialGradient id="cerbHeadBlue" cx="40%" cy="25%" r="85%">
+          <stop offset="0%" stop-color="#c8d8ff"/>
+          <stop offset="55%" stop-color="#7a8fff"/>
+          <stop offset="100%" stop-color="#2a2f80"/>
+        </radialGradient>
+        <radialGradient id="moonGlow" cx="50%" cy="50%" r="60%">
+          <stop offset="0%" stop-color="#ffd84a" stop-opacity="0.7"/>
+          <stop offset="100%" stop-color="#ffd84a" stop-opacity="0"/>
+        </radialGradient>
+      </defs>
+      <!-- glowing moon halo -->
+      <circle cx="50" cy="10" r="9" fill="url(#moonGlow)"/>
+      <path d="M 50,5 a 3.5,3.5 0 1 0 2.5,1.4 a 2.5,2.5 0 1 1 -2.5,-1.4" fill="#ffd84a"/>
+      <!-- shadow + sparkles -->
+      <ellipse cx="50" cy="92" rx="38" ry="4" fill="#ff4fbf" opacity="0.3"/>
+      <circle cx="10" cy="40" r="0.9" fill="#ffffff" opacity="0.9"/>
+      <circle cx="90" cy="40" r="0.9" fill="#ffd84a" opacity="0.9"/>
+      <circle cx="14" cy="70" r="0.8" fill="#2ee6c8" opacity="0.9"/>
+      <circle cx="86" cy="70" r="0.8" fill="#ffffff" opacity="0.9"/>
+      <!-- floating hearts -->
+      <path d="M 16,22 q -1,-2 -3,0 q 0,2 3,3.5 q 3,-1.5 3,-3.5 q -2,-2 -3,0" fill="#ff4fbf" opacity="0.8"/>
+      <path d="M 84,22 q -1,-2 -3,0 q 0,2 3,3.5 q 3,-1.5 3,-3.5 q -2,-2 -3,0" fill="#ff4fbf" opacity="0.8"/>
+      <!-- body -->
+      <ellipse cx="50" cy="74" rx="38" ry="16" fill="url(#cerbBody)"/>
+      <ellipse cx="50" cy="78" rx="22" ry="9" fill="#fff3df" opacity="0.95"/>
+      <ellipse cx="24" cy="88" rx="6" ry="3.5" fill="#fff3df"/>
+      <ellipse cx="76" cy="88" rx="6" ry="3.5" fill="#fff3df"/>
+      <circle cx="24" cy="89" r="2" fill="#ff8fb8"/>
+      <circle cx="76" cy="89" r="2" fill="#ff8fb8"/>
+      <!-- tail -->
+      <path d="M 86,72 Q 96,62 92,52" stroke="#b14bff" stroke-width="5" fill="none" stroke-linecap="round"/>
+      <!-- collar with little pendant -->
+      <path d="M 18,62 Q 24,67 30,63 Q 36,68 42,63 Q 48,68 50,63 Q 52,68 58,63 Q 64,68 70,63 Q 76,67 82,62 Q 78,74 50,75 Q 22,74 18,62 Z" fill="white"/>
+      <circle cx="50" cy="76" r="2.4" fill="#ffd84a"/>
+      <!-- LEFT head — blue, winking -->
+      <circle cx="20" cy="44" r="15" fill="url(#cerbHeadBlue)"/>
+      <path d="M 10,32 L 4,12 L 16,30 Z" fill="#5a5fc0"/>
+      <path d="M 12,28 L 10,16 L 15,27 Z" fill="#a8c7ff"/>
+      <path d="M 13,44 Q 18,40 22,45" stroke="#15101e" stroke-width="1.4" fill="none" stroke-linecap="round"/>
+      <ellipse cx="27" cy="44" rx="3.2" ry="4.2" fill="#15101e"/>
+      <circle cx="26" cy="42" r="1.2" fill="white"/>
+      <circle cx="28" cy="46" r="0.7" fill="white"/>
+      <ellipse cx="20" cy="51" rx="2" ry="1.4" fill="#ff4fbf"/>
+      <path d="M 17,55 Q 20,58 23,55" stroke="#15101e" stroke-width="1.3" fill="none" stroke-linecap="round"/>
+      <!-- MIDDLE head — pink, biggest, big smile -->
+      <circle cx="50" cy="34" r="19" fill="url(#cerbHeadPink)"/>
+      <path d="M 35,18 L 28,0 L 43,14 Z" fill="#9655d6"/>
+      <path d="M 38,12 L 35,4 L 42,12 Z" fill="#ff8fb8"/>
+      <path d="M 65,18 L 72,0 L 57,14 Z" fill="#9655d6"/>
+      <path d="M 62,12 L 65,4 L 58,12 Z" fill="#ff8fb8"/>
+      <ellipse cx="42" cy="34" rx="4.5" ry="6" fill="#15101e"/>
+      <circle cx="41" cy="31" r="1.6" fill="white"/>
+      <circle cx="43" cy="37" r="0.9" fill="white"/>
+      <ellipse cx="58" cy="34" rx="4.5" ry="6" fill="#15101e"/>
+      <circle cx="57" cy="31" r="1.6" fill="white"/>
+      <circle cx="59" cy="37" r="0.9" fill="white"/>
+      <ellipse cx="50" cy="44" rx="2.5" ry="1.8" fill="#ff4fbf"/>
+      <path d="M 44,49 Q 50,54 56,49" stroke="#15101e" stroke-width="1.7" fill="none" stroke-linecap="round"/>
+      <circle cx="33" cy="40" r="3" fill="#ff8fb8" opacity="0.55"/>
+      <circle cx="67" cy="40" r="3" fill="#ff8fb8" opacity="0.55"/>
+      <!-- RIGHT head — blue, tongue out -->
+      <circle cx="80" cy="44" r="15" fill="url(#cerbHeadBlue)"/>
+      <path d="M 90,32 L 96,12 L 84,30 Z" fill="#5a5fc0"/>
+      <path d="M 88,28 L 90,16 L 85,27 Z" fill="#a8c7ff"/>
+      <ellipse cx="73" cy="44" rx="3.2" ry="4.2" fill="#15101e"/>
+      <circle cx="72" cy="42" r="1.2" fill="white"/>
+      <circle cx="74" cy="46" r="0.7" fill="white"/>
+      <ellipse cx="86" cy="44" rx="3.2" ry="4.2" fill="#15101e"/>
+      <circle cx="85" cy="42" r="1.2" fill="white"/>
+      <circle cx="87" cy="46" r="0.7" fill="white"/>
+      <ellipse cx="80" cy="51" rx="2" ry="1.4" fill="#ff4fbf"/>
+      <path d="M 77,55 Q 80,57 83,55" stroke="#15101e" stroke-width="1.3" fill="none" stroke-linecap="round"/>
+      <path d="M 80,56 Q 80,62 83,62 Q 84,59 82,56 Z" fill="#ff8fb8"/>
+    </svg>`,
 };
 
 // ============================================================
@@ -947,27 +1273,20 @@ function spawnFlyingBiscuit() {
   biscuit.addEventListener("animationend", () => biscuit.remove());
 }
 
-// ----- AMBIENT STARS at the edges of the habitat -----
-// Few and subtle since the artwork itself has a beautiful starfield;
-// these add a touch of twinkling motion in the dark space around it.
+// ----- AMBIENT STARS in the habitat (galaxy mood) -----
 function setupAmbientStars() {
-  const symbols = ["✦", "✧", "⋆", "✶"];
-  const slots = [
-    { top: 8,  left: 8  }, { top: 8,  left: 88 },
-    { top: 50, left: 4  }, { top: 50, left: 92 },
-    { top: 88, left: 12 }, { top: 88, left: 84 },
-  ];
-  slots.forEach((slot, i) => {
+  const symbols = ["✦", "✧", "⋆", "✶", "·"];
+  for (let i = 0; i < 12; i++) {
     const star = document.createElement("span");
     star.className = "ambient-star";
-    star.textContent = symbols[i % symbols.length];
-    star.style.top = slot.top + "%";
-    star.style.left = slot.left + "%";
-    star.style.fontSize = (9 + Math.random() * 5) + "px";
+    star.textContent = symbols[Math.floor(Math.random() * symbols.length)];
+    star.style.top = (5 + Math.random() * 90) + "%";
+    star.style.left = (3 + Math.random() * 94) + "%";
+    star.style.fontSize = (8 + Math.random() * 10) + "px";
     star.style.animationDelay = (Math.random() * 4) + "s";
     star.style.animationDuration = (2.5 + Math.random() * 2.5) + "s";
     habitatEl.appendChild(star);
-  });
+  }
 }
 setupAmbientStars();
 

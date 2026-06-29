@@ -68,8 +68,8 @@ html, body {
   background: radial-gradient(ellipse at center, #2a1f47 0%, #15101e 80%);
   border: 1px solid #3a2a5e;
   border-radius: 20px;
-  padding: 16px;
-  height: 260px;
+  padding: 20px;
+  height: 200px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -78,8 +78,8 @@ html, body {
   overflow: hidden;
 }
 .pet-stage {
-  width: 220px;
-  height: 220px;
+  width: 150px;
+  height: 150px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -89,14 +89,7 @@ html, body {
   user-select: none;
   -webkit-tap-highlight-color: transparent;
 }
-.pet-stage svg,
-.pet-stage img {
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-  pointer-events: none;
-  border-radius: 16px;
-}
+.pet-stage svg { width: 100%; height: 100%; pointer-events: none; }
 
 /* gentle bobbing animation so the pet feels alive */
 @keyframes bob {
