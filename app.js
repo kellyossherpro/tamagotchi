@@ -593,6 +593,8 @@ const SVGS = {
       <circle cx="32" cy="42" r="18" fill="url(#pup2HeadPink)"/>
       <path d="M 18,32 L 12,12 L 26,28 Z" fill="#9655d6"/>
       <path d="M 21,26 L 18,15 L 25,25 Z" fill="#ff8fb8"/>
+      <path d="M 42,30 L 45,17 L 36,26 Z" fill="#9655d6"/>
+      <path d="M 41,26 L 43,20 L 39,25 Z" fill="#ff8fb8"/>
       <ellipse cx="26" cy="42" rx="4" ry="5.5" fill="#15101e"/>
       <circle cx="25" cy="40" r="1.4" fill="white"/>
       <circle cx="27" cy="45" r="0.8" fill="white"/>
@@ -607,6 +609,8 @@ const SVGS = {
       <circle cx="68" cy="42" r="18" fill="url(#pup2HeadBlue)"/>
       <path d="M 82,32 L 88,12 L 74,28 Z" fill="#5a5fc0"/>
       <path d="M 79,26 L 82,15 L 75,25 Z" fill="#a8c7ff"/>
+      <path d="M 58,30 L 55,17 L 64,26 Z" fill="#5a5fc0"/>
+      <path d="M 59,26 L 57,20 L 61,25 Z" fill="#a8c7ff"/>
       <ellipse cx="62" cy="42" rx="4" ry="5.5" fill="#15101e"/>
       <circle cx="61" cy="40" r="1.4" fill="white"/>
       <circle cx="63" cy="45" r="0.8" fill="white"/>
@@ -654,6 +658,8 @@ const SVGS = {
       <circle cx="24" cy="50" r="14" fill="url(#pup3HeadBlue)"/>
       <path d="M 14,40 L 8,22 L 20,38 Z" fill="#5a5fc0"/>
       <path d="M 16,36 L 14,26 L 19,35 Z" fill="#a8c7ff"/>
+      <path d="M 32,40 L 36,26 L 27,38 Z" fill="#5a5fc0"/>
+      <path d="M 31,36 L 34,30 L 29,36 Z" fill="#a8c7ff"/>
       <path d="M 18,50 Q 22,47 26,51" stroke="#15101e" stroke-width="1.3" fill="none" stroke-linecap="round"/>
       <ellipse cx="30" cy="50" rx="3" ry="4" fill="#15101e"/>
       <circle cx="29" cy="48" r="1.1" fill="white"/>
@@ -680,6 +686,8 @@ const SVGS = {
       <circle cx="76" cy="50" r="14" fill="url(#pup3HeadBlue)"/>
       <path d="M 86,40 L 92,22 L 80,38 Z" fill="#5a5fc0"/>
       <path d="M 84,36 L 86,26 L 81,35 Z" fill="#a8c7ff"/>
+      <path d="M 68,40 L 64,26 L 73,38 Z" fill="#5a5fc0"/>
+      <path d="M 69,36 L 66,30 L 71,36 Z" fill="#a8c7ff"/>
       <ellipse cx="70" cy="50" rx="3" ry="4" fill="#15101e"/>
       <circle cx="69" cy="48" r="1.1" fill="white"/>
       <circle cx="71" cy="52" r="0.6" fill="white"/>
@@ -744,6 +752,8 @@ const SVGS = {
       <circle cx="20" cy="44" r="15" fill="url(#cerbHeadBlue)"/>
       <path d="M 10,32 L 4,12 L 16,30 Z" fill="#5a5fc0"/>
       <path d="M 12,28 L 10,16 L 15,27 Z" fill="#a8c7ff"/>
+      <path d="M 30,32 L 34,16 L 24,30 Z" fill="#5a5fc0"/>
+      <path d="M 29,28 L 32,21 L 26,28 Z" fill="#a8c7ff"/>
       <path d="M 13,44 Q 18,40 22,45" stroke="#15101e" stroke-width="1.4" fill="none" stroke-linecap="round"/>
       <ellipse cx="27" cy="44" rx="3.2" ry="4.2" fill="#15101e"/>
       <circle cx="26" cy="42" r="1.2" fill="white"/>
@@ -770,6 +780,8 @@ const SVGS = {
       <circle cx="80" cy="44" r="15" fill="url(#cerbHeadBlue)"/>
       <path d="M 90,32 L 96,12 L 84,30 Z" fill="#5a5fc0"/>
       <path d="M 88,28 L 90,16 L 85,27 Z" fill="#a8c7ff"/>
+      <path d="M 70,32 L 66,16 L 76,30 Z" fill="#5a5fc0"/>
+      <path d="M 71,28 L 68,21 L 74,28 Z" fill="#a8c7ff"/>
       <ellipse cx="73" cy="44" rx="3.2" ry="4.2" fill="#15101e"/>
       <circle cx="72" cy="42" r="1.2" fill="white"/>
       <circle cx="74" cy="46" r="0.7" fill="white"/>
