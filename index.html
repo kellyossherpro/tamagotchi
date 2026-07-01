@@ -31,7 +31,7 @@
             <div class="mood-overlay" id="moodOverlay"></div>
           </section>
 
-          <!-- STATS: hunger, happiness, level/xp, days survived -->
+          <!-- STATS: hunger + level/xp + days survived -->
           <section class="stats">
             <div class="stat" id="hungerStat">
               <div class="stat-label-row">
@@ -39,13 +39,6 @@
                 <span class="stat-value" id="hungerValue">100 / 100</span>
               </div>
               <div class="bar"><div class="bar-fill" id="hungerFill"></div></div>
-            </div>
-            <div class="stat" id="happinessStat">
-              <div class="stat-label-row">
-                <label>Happiness</label>
-                <span class="stat-value" id="happinessValue">100 / 100</span>
-              </div>
-              <div class="bar"><div class="bar-fill" id="happinessFill"></div></div>
             </div>
             <div class="meta">
               <span>Stage: <strong id="stageLabel">Egg</strong></span>
@@ -145,7 +138,7 @@
         <div class="settings-option">
           <h3>Reset the pet</h3>
           <p>
-            Your pet becomes a fresh egg. XP, days survived, hunger and happiness
+            Your pet becomes a fresh egg. XP, days survived, hunger
             all reset to the start. <strong>Your tasks stay exactly as they are.</strong>
           </p>
           <button id="resetPetAction" class="primary-btn small">Reset pet</button>
@@ -155,7 +148,7 @@
           <h3>Reset XP</h3>
           <p>
             XP goes back to 0 and the pet goes back to an egg. Days survived,
-            hunger and happiness stay. <strong>All tasks are unticked and re-armed</strong>
+            hunger stay. <strong>All tasks are unticked and re-armed</strong>
             so you can use them to earn XP again.
           </p>
           <button id="resetXpAction" class="primary-btn small">Reset XP</button>

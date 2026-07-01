@@ -5,7 +5,7 @@
     - draws the right pet on screen
     - handles adding/checking/deleting tasks
     - feeds + heals the pet when you finish tasks
-    - drains hunger and happiness over time (weekdays only)
+    - drains hunger over time (weekdays only)
     - hibernates on weekends
     - evolves the pet when you've earned it
     - handles death and starting over
@@ -175,9 +175,6 @@ function applyTimePassage() {
   if (elapsedWeekdayMs > 0 && state.pet.alive) {
     // Decay hunger
     state.pet.hunger = Math.max(0, state.pet.hunger - elapsedWeekdayMs * DECAY_PER_MS);
-    // Happiness decays too, faster if hungry
-    const sadMultiplier = state.pet.hunger < HUNGRY_THRESHOLD ? HUNGRY_SAD_MULTIPLIER : 1;
-    state.pet.happiness = Math.max(0, state.pet.happiness - elapsedWeekdayMs * DECAY_PER_MS * sadMultiplier);
   }
 
   // Detect day rollover. If today is a new day:
@@ -196,8 +193,8 @@ function applyTimePassage() {
 
   state.lastSeen = now;
 
-  // Check death (both bars hit 0)
-  if (state.pet.alive && state.pet.hunger <= 0 && state.pet.happiness <= 0) {
+  // Check death — hunger hits 0
+  if (state.pet.alive && state.pet.hunger <= 0) {
     state.pet.alive = false;
   }
 
@@ -205,14 +202,13 @@ function applyTimePassage() {
   applyOverdueLosses();
 
   // Check evolution (level up if BOTH thresholds met).
-  // When evolution fires, Penny "eats the biscuit": big feed + happiness bonus,
-  // and we record the new XP baseline so the biscuit resets to greyscale.
+  // When evolution fires, Penny "eats the biscuit": big feed bonus, and we
+  // record the new XP baseline so the biscuit resets to greyscale.
   while (state.pet.stageIndex < STAGES.length - 1) {
     const next = STAGES[state.pet.stageIndex + 1];
     if (state.pet.survivedWeekdays >= next.daysNeeded && state.pet.xp >= next.xpNeeded) {
       state.pet.stageIndex += 1;
       state.pet.hunger = Math.min(100, state.pet.hunger + BISCUIT_FEED_HUNGER);
-      state.pet.happiness = Math.min(100, state.pet.happiness + BISCUIT_FEED_HAPPINESS);
       state.pet.xpAtLastEvolution = next.xpNeeded;
     } else {
       break;
@@ -229,7 +225,6 @@ function completeTask(todo) {
   if (!todo.awarded) {
     todo.awarded = true;
     state.pet.hunger = Math.min(100, state.pet.hunger + FEED_HUNGER);
-    state.pet.happiness = Math.min(100, state.pet.happiness + FEED_HAPPINESS);
     state.pet.xp += todo.xp;
     state.pet.tasksDoneEver += 1;
     state.tasksCompletedToday += 1;
@@ -366,7 +361,7 @@ function resetPetOnly() {
   const ok = confirm(
     "RESET THE PET\n\n" +
     "Your pet will become a fresh egg.\n" +
-    "XP, days survived, hunger and happiness all reset to the start.\n" +
+    "XP, days survived, hunger all reset to the start.\n" +
     "Your tasks STAY exactly as they are (done tasks stay done).\n\n" +
     "Continue?"
   );
@@ -387,7 +382,7 @@ function resetXp() {
   const ok = confirm(
     "RESET XP\n\n" +
     "XP goes back to 0 and the pet goes back to an egg.\n" +
-    "Days survived, hunger and happiness STAY where they are.\n" +
+    "Days survived, hunger STAY where they are.\n" +
     "All tasks will be unticked and re-armed so you can earn XP again.\n\n" +
     "Continue?"
   );
@@ -836,19 +831,17 @@ function render() {
     mood.textContent = "💤"; // hibernating
   } else if (!state.pet.alive) {
     mood.textContent = "";
-  } else if (state.pet.hunger < HUNGRY_THRESHOLD || state.pet.happiness < HUNGRY_THRESHOLD) {
+  } else if (state.pet.hunger < HUNGRY_THRESHOLD) {
     mood.textContent = "😢";
-  } else if (state.pet.hunger > 80 && state.pet.happiness > 80) {
+  } else if (state.pet.hunger > 80) {
     mood.textContent = "✨";
   } else {
     mood.textContent = "";
   }
 
-  // Stat bars + their numeric labels + hover-tooltip explanations
+  // Stat bar + numeric label + hover-tooltip explanation
   setBar("hungerFill", state.pet.hunger);
-  setBar("happinessFill", state.pet.happiness);
   updateStatLabel("hungerStat", "hungerValue", state.pet.hunger, buildHungerTooltip());
-  updateStatLabel("happinessStat", "happinessValue", state.pet.happiness, buildHappinessTooltip());
 
   // Meta
   document.getElementById("stageLabel").textContent = STAGES[state.pet.stageIndex].name;
@@ -1113,25 +1106,6 @@ function buildHungerTooltip() {
     ? `Weekend — hunger doesn't decay until Monday.`
     : `Drops about 50 points per weekday.`;
   return `Hunger: ${h} / 100 (lacking ${lacking}).\n${status}\n${rule}\nEach task you tick off feeds her +20 hunger.`;
-}
-
-function buildHappinessTooltip() {
-  const hp = Math.round(state.pet.happiness);
-  const lacking = 100 - hp;
-  const weekend = isWeekend(new Date());
-  let status;
-  if (hp >= 90)      status = `She's beaming.`;
-  else if (hp >= 60) status = `She's content.`;
-  else if (hp >= 30) status = `She's a bit glum.`;
-  else if (hp > 0)   status = `She's miserable!`;
-  else               status = `She's heartbroken!`;
-  const hungryNote = state.pet.hunger < HUNGRY_THRESHOLD
-    ? ` Happiness drops 50% faster right now because she's hungry.`
-    : ``;
-  const rule = weekend
-    ? `Weekend — happiness doesn't decay until Monday.`
-    : `Drops about 50 points per weekday.${hungryNote}`;
-  return `Happiness: ${hp} / 100 (lacking ${lacking}).\n${status}\n${rule}\nEach task you tick off cheers her up +15.`;
 }
 
 // ============================================================
