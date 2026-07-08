@@ -404,6 +404,7 @@ input[type="date"]::-webkit-calendar-picker-indicator:hover { opacity: 1; }
 .diff-btn.normal { background: var(--neon-teal); }
 .diff-btn.medium { background: var(--neon-yellow); }
 .diff-btn.hard   { background: var(--neon-pink); }
+.diff-btn.extra-hard { background: var(--neon-purple); color: white; }
 
 /* ----- MAIN 3-COLUMN GRID: Penny (left) | active tasks (middle) | done + biscuit (right) ----- */
 .main-grid {
@@ -586,6 +587,7 @@ input[type="date"]::-webkit-calendar-picker-indicator:hover { opacity: 1; }
 .todo-item .xp-tag.normal { background: var(--neon-teal); }
 .todo-item .xp-tag.medium { background: var(--neon-yellow); }
 .todo-item .xp-tag.hard   { background: var(--neon-pink); }
+.todo-item .xp-tag.extra-hard { background: var(--neon-purple); color: white; }
 
 /* Due-date pill on each task */
 .todo-item .due-tag {
@@ -674,6 +676,7 @@ input[type="date"]::-webkit-calendar-picker-indicator:hover { opacity: 1; }
 .todo-item .diff-mini.normal { background: var(--neon-teal); }
 .todo-item .diff-mini.medium { background: var(--neon-yellow); }
 .todo-item .diff-mini.hard   { background: var(--neon-pink); }
+.todo-item .diff-mini.extra-hard { background: var(--neon-purple); color: white; }
 .todo-item .save-edit,
 .todo-item .cancel-edit {
   background: transparent;

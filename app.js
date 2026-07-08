@@ -895,6 +895,7 @@ function render() {
             <button class="diff-mini normal" data-xp="5" data-diff="normal">5</button>
             <button class="diff-mini medium" data-xp="10" data-diff="medium">10</button>
             <button class="diff-mini hard" data-xp="20" data-diff="hard">20</button>
+            <button class="diff-mini extra-hard" data-xp="50" data-diff="extra-hard">50</button>
           </div>
           <button class="save-edit" title="Save">✓</button>
           <button class="cancel-edit" title="Cancel">×</button>
@@ -1148,7 +1149,8 @@ document.querySelectorAll(".diff-btn").forEach(btn => {
     const f = readAddForm();
     if (!f.text.trim()) return; // need a title
     const xp = parseInt(btn.dataset.xp, 10);
-    const difficulty = btn.classList.contains("hard") ? "hard"
+    const difficulty = btn.classList.contains("extra-hard") ? "extra-hard"
+                     : btn.classList.contains("hard") ? "hard"
                      : btn.classList.contains("medium") ? "medium" : "normal";
     addTodo(f.text, xp, difficulty, f.due, f.description, f.link);
     clearAddForm();
