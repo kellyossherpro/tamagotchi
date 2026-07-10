@@ -70,6 +70,9 @@ function freshState() {
       // progress toward next evolution = (xp - xpAtLastEvolution) / (nextThreshold - xpAtLastEvolution)
       xpAtLastEvolution: 0,
     },
+    // Pets that have completed the whole journey to Big Cerberus.
+    // Each entry is a snapshot: { name, finishedAt }
+    graduated: [],
     todos: [],                    // list of { id, text, xp, difficulty, done }
     // Time bookkeeping:
     lastSeen: Date.now(),         // when the page was last open
@@ -210,10 +213,50 @@ function applyTimePassage() {
       state.pet.stageIndex += 1;
       state.pet.hunger = Math.min(100, state.pet.hunger + BISCUIT_FEED_HUNGER);
       state.pet.xpAtLastEvolution = next.xpNeeded;
+      // If this pet just reached the final Cerberus form, schedule the
+      // graduation ceremony — she gets moved into the collection and a
+      // fresh egg spawns beside her.
+      if (state.pet.stageIndex === STAGES.length - 1) {
+        scheduleGraduation();
+      }
     } else {
       break;
     }
   }
+}
+
+// When a pet first hits Big Cerberus, wait for the evolution animation
+// to finish, then move her into the "graduated" collection and spawn a
+// brand-new egg. All existing tasks are re-armed so they can feed the
+// new pet just like they fed the first one.
+let graduationScheduled = false;
+function scheduleGraduation() {
+  if (graduationScheduled) return;
+  graduationScheduled = true;
+  setTimeout(() => {
+    // Snapshot the graduating pet into the collection
+    state.graduated = state.graduated || [];
+    state.graduated.push({
+      name: state.pet.name,
+      finishedAt: Date.now(),
+    });
+    // Ask for a new name for the fresh egg (default suggests numbered
+    // sibling to keep the family vibe)
+    const suggestion = state.pet.name + " II";
+    const newName = prompt(
+      `${state.pet.name} has become a full Cerberus and joined your pack! Name your new egg:`,
+      suggestion
+    ) || suggestion;
+    // Reset the active pet to a fresh egg but keep todos and re-arm them.
+    const keptTodos = state.todos.map(t => ({ ...t, done: false, awarded: false }));
+    state.pet = freshState().pet;
+    state.pet.name = newName.trim().slice(0, 24);
+    state.todos = keptTodos;
+    state.tasksCompletedToday = 0;
+    saveState();
+    render();
+    graduationScheduled = false;
+  }, 3200); // ~3s: hatchPop finishes ~1.4s, plus a beat for the sparkle shower
 }
 
 // When you tick a task: mark it done. If this is the FIRST time this
@@ -798,9 +841,38 @@ const SVGS = {
 // tick. That reinjection used to wipe in-flight wiggle/heart animations.
 let lastDrawnStageKey = "";
 
+// Manage the "graduated pets" row inside the habitat. Only rebuilds the
+// DOM when the count actually changes.
+function renderGraduatedPets() {
+  let container = document.getElementById("graduatedPets");
+  if (!container) {
+    container = document.createElement("div");
+    container.id = "graduatedPets";
+    container.className = "graduated-pets";
+    // Insert before .pet-stage so the graduated pets appear to its left
+    // when the habitat is flex-row.
+    habitatEl.insertBefore(container, petStageEl);
+  }
+  const grads = state.graduated || [];
+  if (container.dataset.count !== String(grads.length)) {
+    container.innerHTML = "";
+    grads.forEach(pet => {
+      const wrap = document.createElement("div");
+      wrap.className = "graduated-pet";
+      wrap.title = pet.name + " · Cerberus";
+      wrap.innerHTML = SVGS[STAGES.length - 1]; // full Cerberus SVG
+      container.appendChild(wrap);
+    });
+    container.dataset.count = String(grads.length);
+  }
+}
+
 function render() {
   // Pet name
   document.getElementById("petName").textContent = state.pet.name || "Your Pet";
+
+  // Graduated pets (past Cerberuses) — shown small alongside the active pet
+  renderGraduatedPets();
 
   // Pet SVG (or gravestone if dead) — only redraw when the stage or
   // alive state actually changes.
