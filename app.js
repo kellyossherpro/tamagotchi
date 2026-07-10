@@ -1074,7 +1074,11 @@ function renderBiscuit() {
   // grayscale 100% (no XP) → 0% (full biscuit)
   const gray = Math.round((1 - progress) * 100);
   el.style.filter = `grayscale(${gray}%)`;
-  caption.textContent = `${Math.floor(earned)} / ${needed} XP to ${next.name}`;
+  // Weekday progress toward next stage (capped display so it doesn't go past needed)
+  const daysNow = Math.min(state.pet.survivedWeekdays, next.daysNeeded);
+  caption.innerHTML =
+    `${Math.floor(earned)} / ${needed} XP · ${daysNow} / ${next.daysNeeded} weekdays` +
+    `<br>to ${next.name}`;
 }
 
 function setBar(id, value) {
