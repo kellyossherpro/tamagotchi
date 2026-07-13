@@ -247,11 +247,11 @@ function scheduleGraduation() {
       `${state.pet.name} has become a full Cerberus and joined your pack! Name your new egg:`,
       suggestion
     ) || suggestion;
-    // Reset the active pet to a fresh egg but keep todos and re-arm them.
-    const keptTodos = state.todos.map(t => ({ ...t, done: false, awarded: false }));
+    // Reset the active pet to a fresh egg. Todos stay exactly as they are:
+    // completed tasks remain completed (they're historical achievements,
+    // not repeatable), and active tasks remain active to feed the new pet.
     state.pet = freshState().pet;
     state.pet.name = newName.trim().slice(0, 24);
-    state.todos = keptTodos;
     state.tasksCompletedToday = 0;
     saveState();
     render();
