@@ -871,8 +871,12 @@ function render() {
   // Pet name
   document.getElementById("petName").textContent = state.pet.name || "Your Pet";
 
-  // Graduated pets (past Cerberuses) — shown small alongside the active pet
+  // Graduated pets (past Cerberuses) — shown above the active pet once any exist
   renderGraduatedPets();
+  habitatEl.classList.toggle(
+    "has-graduated",
+    (state.graduated || []).length > 0
+  );
 
   // Pet SVG (or gravestone if dead) — only redraw when the stage or
   // alive state actually changes.

@@ -69,7 +69,7 @@ html, body {
   border: 1px solid #3a2a5e;
   border-radius: 20px;
   padding: 16px;
-  height: 200px;
+  min-height: 200px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -78,12 +78,14 @@ html, body {
   margin-bottom: 18px;
   overflow: hidden;
 }
-/* Row of past Cerberuses that stays alongside the current pet */
+/* Row of past Cerberuses that stays with the current pet */
 .graduated-pets {
   display: flex;
   align-items: center;
-  gap: 4px;
+  justify-content: center;
+  gap: 6px;
   flex-shrink: 1;
+  flex-wrap: wrap;
 }
 .graduated-pet {
   width: 64px;
@@ -92,6 +94,23 @@ html, body {
   animation: bob 3.4s ease-in-out infinite;
 }
 .graduated-pet svg { width: 100%; height: 100%; display: block; }
+
+/* Once at least one pet has graduated, stack into two blocks:
+   the (bigger) Cerberus(es) on top and the (smaller) new egg below. */
+.habitat.has-graduated {
+  flex-direction: column;
+  min-height: 260px;
+  padding: 12px;
+  gap: 8px;
+}
+.habitat.has-graduated .graduated-pet {
+  width: 140px;
+  height: 140px;
+}
+.habitat.has-graduated .pet-stage {
+  width: 90px;
+  height: 90px;
+}
 .pet-stage {
   width: 150px;
   height: 150px;
