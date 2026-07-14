@@ -861,6 +861,12 @@ function renderGraduatedPets() {
       wrap.className = "graduated-pet";
       wrap.title = pet.name + " · Cerberus";
       wrap.innerHTML = SVGS[STAGES.length - 1]; // full Cerberus SVG
+      // Click to jiggle, double-click to shower hearts — same as the active pet.
+      wrap.addEventListener("click", () => jiggleElement(wrap));
+      wrap.addEventListener("dblclick", () => {
+        jiggleElement(wrap);
+        showerHearts(7, wrap);
+      });
       container.appendChild(wrap);
     });
     container.dataset.count = String(grads.length);
@@ -1264,27 +1270,34 @@ document.getElementById("renamePetAction").addEventListener("click", () => {
 const petStageEl = document.getElementById("petStage");
 const habitatEl = document.getElementById("habitat");
 
+// Jiggle any pet-like element (active pet OR a graduated Cerberus).
+function jiggleElement(el) {
+  el.classList.remove("wiggle");
+  void el.offsetWidth; // force reflow so animation restarts on spam-click
+  el.classList.add("wiggle");
+  setTimeout(() => el.classList.remove("wiggle"), 600);
+}
 function jigglePet() {
   if (!state.pet.alive) return;
-  // Remove and re-add so the animation restarts cleanly if you spam-click.
-  petStageEl.classList.remove("wiggle");
-  // Force a reflow so the browser registers the class removal before re-add.
-  void petStageEl.offsetWidth;
-  petStageEl.classList.add("wiggle");
-  setTimeout(() => petStageEl.classList.remove("wiggle"), 600);
+  jiggleElement(petStageEl);
 }
 
-function showerHearts(count) {
-  if (!state.pet.alive) return;
-  spawnSymbols(["💖", "💕", "💋", "💗", "✨", "💞"], count);
+// Shower hearts. If a source element is passed, hearts spawn from that
+// element's position; otherwise from the active pet.
+function showerHearts(count, sourceEl) {
+  spawnSymbols(["💖", "💕", "💋", "💗", "✨", "💞"], count, false, sourceEl);
 }
 
 // Bigger, longer-lasting shower for evolution celebrations.
-function showerSparkles(count) {
-  spawnSymbols(["✨", "🌟", "⭐", "💫", "🎉", "💖"], count, true);
+function showerSparkles(count, sourceEl) {
+  spawnSymbols(["✨", "🌟", "⭐", "💫", "🎉", "💖"], count, true, sourceEl);
 }
 
-function spawnSymbols(symbols, count, big) {
+function spawnSymbols(symbols, count, big, sourceEl) {
+  const src = sourceEl || petStageEl;
+  // Position of the source relative to the habitat (both live inside habitat).
+  const cx = src.offsetLeft + src.offsetWidth / 2;
+  const topY = src.offsetTop + src.offsetHeight * 0.4;
   for (let i = 0; i < count; i++) {
     const el = document.createElement("span");
     el.className = "float-heart" + (big ? " big" : "");
@@ -1292,7 +1305,9 @@ function spawnSymbols(symbols, count, big) {
     const offsetX = (Math.random() - 0.5) * (big ? 180 : 120);
     const drift = (Math.random() - 0.5) * 60;
     const rot = (Math.random() - 0.5) * 50;
-    el.style.left = `calc(50% + ${offsetX}px)`;
+    el.style.left = (cx + offsetX) + "px";
+    el.style.top = topY + "px";
+    el.style.bottom = "auto";
     el.style.setProperty("--drift", `${drift}px`);
     el.style.setProperty("--rot", `${rot}deg`);
     el.style.animationDelay = (i * (big ? 50 : 70)) + "ms";

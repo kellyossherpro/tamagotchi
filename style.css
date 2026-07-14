@@ -92,6 +92,10 @@ html, body {
   height: 64px;
   filter: drop-shadow(0 0 6px rgba(177, 75, 255, 0.35));
   animation: bob 3.4s ease-in-out infinite;
+  cursor: pointer;
+  transform-origin: bottom center;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
 }
 .graduated-pet svg { width: 100%; height: 100%; display: block; }
 
@@ -132,7 +136,8 @@ html, body {
 }
 
 /* JIGGLE — fired on click. Overrides the gentle bob for ~0.6s. */
-.pet-stage.wiggle {
+.pet-stage.wiggle,
+.graduated-pet.wiggle {
   animation: wiggle 0.55s cubic-bezier(.36,.07,.19,.97);
 }
 @keyframes wiggle {
