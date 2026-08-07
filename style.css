@@ -1,47 +1,74 @@
 /*
   style.css — the LOOK of the page.
   Colors, sizes, spacing, animations live here.
-  Vibe: clean & light, soft cards, a calm green accent (Kiron palette).
-  Follows the viewer's light/dark mode automatically.
+  Brand: Kiron — Open Sauce One type, Kiron green (#5DCF11) on
+  dark #181923 / white. Follows the viewer's light/dark mode.
 */
 
-/* ----- COLOR PALETTE -----
+/* ----- BRAND FONT (Open Sauce One, self-hosted) ----- */
+@font-face {
+  font-family: "Open Sauce One";
+  src: url("fonts/OpenSauceOne-Regular.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Open Sauce One";
+  src: url("fonts/OpenSauceOne-Bold.woff2") format("woff2");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Open Sauce One";
+  src: url("fonts/OpenSauceOne-Black.woff2") format("woff2");
+  font-weight: 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* ----- COLOR PALETTE (Kiron brand) -----
    All colors live in CSS variables so they're easy to change later.
    Light theme is the default; the dark block below swaps a few tokens. */
 :root {
-  --bg: #f4f6f9;           /* soft light background */
+  --brand-green: #5DCF11;  /* Kiron green */
+  --brand-dark:  #181923;  /* Kiron dark */
+
+  --bg: #f4f5f7;           /* soft light background */
   --panel: #ffffff;        /* cards */
-  --panel-2: #eef1f6;      /* inputs / subtle fills */
-  --border: #e3e8ef;       /* hairline borders */
-  --text: #1b2430;         /* near-black, slightly cool */
-  --muted: #6b7688;        /* dim text for less important stuff */
+  --panel-2: #eef0f3;      /* inputs / subtle fills */
+  --border: #e3e6ec;       /* hairline borders */
+  --text: #181923;         /* Kiron dark as body text */
+  --muted: #6b7280;        /* dim text for less important stuff */
 
-  --accent: #10b981;       /* main green accent */
-  --accent-strong: #059669;/* darker green for hover */
-  --accent-soft: rgba(16, 185, 129, 0.18); /* focus ring / soft fills */
+  --accent: #5DCF11;       /* main green accent */
+  --accent-strong: #4bb00c;/* darker green for hover */
+  --accent-ink: #0e2a00;   /* readable text on green fills */
+  --accent-soft: rgba(93, 207, 17, 0.18); /* focus ring / soft fills */
 
-  /* Difficulty / XP tag colors — kept vibrant to read at a glance */
-  --diff-normal: #14b8a6;  /* teal  — normal */
-  --diff-medium: #f59e0b;  /* amber — medium */
-  --diff-hard:   #ec4899;  /* pink  — hard   */
+  /* Difficulty / XP tag colors — brand green for hard, tints for the rest */
+  --diff-normal: #9fe06b;  /* light green — normal */
+  --diff-medium: #34c759;  /* mid green   — medium */
+  --diff-hard:   #5DCF11;  /* Kiron green — hard   */
 
-  --good: #10b981;         /* full bar */
-  --okay: #f59e0b;         /* mid bar */
+  --good: #5DCF11;         /* full bar */
+  --okay: #b7e26a;         /* mid bar */
   --bad:  #ef4444;         /* low bar / danger */
 
-  --shadow: 0 1px 2px rgba(16, 24, 40, 0.04), 0 4px 16px rgba(16, 24, 40, 0.06);
+  --shadow: 0 1px 2px rgba(24, 25, 35, 0.05), 0 4px 16px rgba(24, 25, 35, 0.07);
 }
 
-/* Dark mode: only redefine the tokens that need to change. */
+/* Dark mode: Kiron dark background, only redefine what changes. */
 @media (prefers-color-scheme: dark) {
   :root {
-    --bg: #0f1620;
-    --panel: #16202e;
-    --panel-2: #1e2a3a;
-    --border: #2a3a4d;
-    --text: #e8eef5;
-    --muted: #93a1b5;
-    --shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 8px 24px rgba(0, 0, 0, 0.35);
+    --bg: #181923;         /* Kiron dark */
+    --panel: #21222f;
+    --panel-2: #2a2b3a;
+    --border: #363749;
+    --text: #f4f5f7;
+    --muted: #9ba1b0;
+    --shadow: 0 1px 2px rgba(0, 0, 0, 0.35), 0 8px 24px rgba(0, 0, 0, 0.4);
   }
 }
 
@@ -52,7 +79,7 @@ html, body {
   padding: 0;
   background: var(--bg);
   color: var(--text);
-  font-family: "Inter", "Segoe UI", system-ui, sans-serif;
+  font-family: "Open Sauce One", "Segoe UI", system-ui, sans-serif;
   min-height: 100vh;
 }
 
@@ -71,16 +98,36 @@ html, body {
   gap: 12px;
   margin-bottom: 24px;
 }
+/* Brand lockup: the Kiron double-slash mark + the pet name. */
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+/* the "//" brand mark — two skewed bars, green + current text color */
+.brand-mark {
+  display: inline-flex;
+  gap: 5px;
+  flex-shrink: 0;
+}
+.brand-mark span {
+  width: 9px;
+  height: 34px;
+  border-radius: 2px;
+  transform: skewX(-18deg);
+}
+.brand-mark span:first-child { background: var(--brand-green); }
+.brand-mark span:last-child  { background: var(--text); }
+
 .header h1 {
   margin: 0;
   font-size: 30px;
-  font-weight: 800;
-  letter-spacing: 0.3px;
-  background: linear-gradient(90deg, var(--accent), #06b6d4);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
+  font-weight: 900;               /* Open Sauce One Black */
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  color: var(--text);
 }
+.header h1 .dot { color: var(--brand-green); }
 
 /* ----- SETTINGS DROPDOWN ----- */
 .settings { position: relative; }
@@ -263,7 +310,7 @@ html, body {
   font-size: 13px;
   color: var(--muted);
 }
-.evo-progress strong { color: var(--accent); }
+.evo-progress strong { color: var(--accent-strong); }
 
 /* ----- ADD TASK ----- */
 .add-task {
@@ -303,7 +350,7 @@ html, body {
   border-radius: 10px;
   padding: 10px 12px;
   font-weight: 700;
-  color: #ffffff;
+  color: var(--accent-ink);   /* dark ink reads on the green tints */
   cursor: pointer;
   transition: transform 0.1s ease, filter 0.2s ease;
 }
@@ -328,8 +375,8 @@ html, body {
 .section-title .count {
   font-size: 12px;
   font-weight: 700;
-  color: var(--accent);
-  background: var(--accent-soft);
+  color: var(--accent-ink);
+  background: var(--brand-green);
   border-radius: 999px;
   padding: 1px 9px;
   letter-spacing: 0;
@@ -363,7 +410,7 @@ html, body {
   font-size: 12px;
   padding: 3px 9px;
   border-radius: 999px;
-  color: #ffffff;
+  color: var(--accent-ink);   /* dark ink on the green tints */
   font-weight: 700;
   white-space: nowrap;
 }
@@ -436,7 +483,7 @@ html, body {
 
 .primary-btn {
   background: linear-gradient(90deg, var(--accent), var(--accent-strong));
-  color: white;
+  color: var(--accent-ink);
   border: none;
   padding: 12px 20px;
   font-size: 15px;
