@@ -223,6 +223,16 @@ function deleteTodo(id) {
   render();
 }
 
+// Remove all completed tasks at once.
+function clearCompleted() {
+  const done = state.todos.filter(t => t.done).length;
+  if (done === 0) return;
+  if (!confirm(`Remove ${done} completed task${done === 1 ? "" : "s"}? This can't be undone.`)) return;
+  state.todos = state.todos.filter(t => !t.done);
+  saveState();
+  render();
+}
+
 // Soft reset: new egg, todos preserved (we promised).
 function reviveAsEgg() {
   const oldTodos = state.todos;
@@ -434,10 +444,20 @@ function render() {
   document.getElementById("xpLabel").textContent = Math.floor(state.pet.xp);
   document.getElementById("daysLabel").textContent = state.pet.survivedWeekdays;
 
-  // Todo list
-  const list = document.getElementById("todoList");
-  list.innerHTML = "";
-  state.todos.forEach(todo => {
+  // Evolution progress — how close to the next stage.
+  const evo = document.getElementById("evoProgress");
+  const next = STAGES[state.pet.stageIndex + 1];
+  if (!next) {
+    evo.innerHTML = "Final form reached ✨ — <strong>Big Cerberus</strong>";
+  } else {
+    evo.innerHTML =
+      `<strong>${Math.floor(state.pet.xp)}/${next.xpNeeded} XP</strong> · ` +
+      `<strong>${state.pet.survivedWeekdays}/${next.daysNeeded} weekdays</strong> ` +
+      `to ${next.name}`;
+  }
+
+  // Build one todo <li>. Shared by both the active and completed lists.
+  function buildTodoLi(todo) {
     const li = document.createElement("li");
     li.className = "todo-item" + (todo.done ? " done" : "");
     li.innerHTML = `
@@ -452,10 +472,26 @@ function render() {
       else uncompleteTask(todo);
     });
     li.querySelector(".delete").addEventListener("click", () => deleteTodo(todo.id));
-    list.appendChild(li);
-  });
+    return li;
+  }
 
-  document.getElementById("emptyMsg").classList.toggle("hidden", state.todos.length > 0);
+  // Split tasks into active (to-do) and completed.
+  const active = state.todos.filter(t => !t.done);
+  const done = state.todos.filter(t => t.done);
+
+  // Active list
+  const list = document.getElementById("todoList");
+  list.innerHTML = "";
+  active.forEach(todo => list.appendChild(buildTodoLi(todo)));
+  document.getElementById("todoCount").textContent = active.length;
+  document.getElementById("emptyMsg").classList.toggle("hidden", active.length > 0);
+
+  // Completed list (its own full-width grid)
+  const doneList = document.getElementById("doneList");
+  doneList.innerHTML = "";
+  done.forEach(todo => doneList.appendChild(buildTodoLi(todo)));
+  document.getElementById("doneCount").textContent = done.length;
+  document.getElementById("doneEmptyMsg").classList.toggle("hidden", done.length > 0);
 
   // Death overlay
   const overlay = document.getElementById("deathOverlay");
@@ -503,8 +539,46 @@ document.getElementById("taskInput").addEventListener("keydown", (e) => {
   }
 });
 
-document.getElementById("renameBtn").addEventListener("click", promptForName);
-document.getElementById("resetBtn").addEventListener("click", fullReset);
+// ----- Settings dropdown (gear menu) -----
+const settings = document.getElementById("settings");
+const settingsBtn = document.getElementById("settingsBtn");
+
+function openSettings() {
+  settings.classList.add("open");
+  settingsBtn.setAttribute("aria-expanded", "true");
+}
+function closeSettings() {
+  settings.classList.remove("open");
+  settingsBtn.setAttribute("aria-expanded", "false");
+}
+function toggleSettings() {
+  settings.classList.contains("open") ? closeSettings() : openSettings();
+}
+
+settingsBtn.addEventListener("click", (e) => {
+  e.stopPropagation();
+  toggleSettings();
+});
+// Click anywhere outside the menu closes it.
+document.addEventListener("click", (e) => {
+  if (!settings.contains(e.target)) closeSettings();
+});
+// Escape key closes it too.
+document.addEventListener("keydown", (e) => {
+  if (e.key === "Escape") closeSettings();
+});
+
+// Menu actions — run the action, then close the menu.
+document.getElementById("renameBtn").addEventListener("click", () => {
+  closeSettings();
+  promptForName();
+});
+document.getElementById("resetBtn").addEventListener("click", () => {
+  closeSettings();
+  fullReset();
+});
+
+document.getElementById("clearDoneBtn").addEventListener("click", clearCompleted);
 document.getElementById("reviveBtn").addEventListener("click", reviveAsEgg);
 
 // ============================================================

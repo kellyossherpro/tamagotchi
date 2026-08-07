@@ -13,61 +13,107 @@
   </head>
   <body>
     <main class="app">
-      <!-- HEADER: pet name + a small rename button -->
+      <!-- HEADER: pet name on the left, a settings dropdown on the right.
+           The old standalone "rename" and "reset" buttons now live inside
+           the settings menu, each with a short description of what it does. -->
       <header class="header">
         <h1 id="petName">Your Pet</h1>
-        <button id="renameBtn" class="ghost-btn" title="Rename your pet">rename</button>
+
+        <div class="settings" id="settings">
+          <button
+            id="settingsBtn"
+            class="icon-btn"
+            aria-haspopup="true"
+            aria-expanded="false"
+            title="Settings"
+          >
+            <span class="gear">⚙</span>
+          </button>
+
+          <!-- The dropdown menu. Hidden until you click the gear. -->
+          <div class="settings-menu" id="settingsMenu" role="menu">
+            <button class="menu-item" id="renameBtn" role="menuitem">
+              <span class="menu-title">Rename pet</span>
+              <span class="menu-desc">Give your pet a new name. Nothing else changes.</span>
+            </button>
+            <button class="menu-item danger" id="resetBtn" role="menuitem">
+              <span class="menu-title">Reset everything</span>
+              <span class="menu-desc">Wipes your pet, tasks, XP and days survived, and starts over with a fresh egg. This can't be undone.</span>
+            </button>
+          </div>
+        </div>
       </header>
 
-      <!-- HABITAT: where the pet lives. The SVG inside gets swapped out by app.js
-           depending on the pet's current stage and mood. -->
-      <section class="habitat" id="habitat">
-        <div class="pet-stage" id="petStage"></div>
-        <div class="mood-overlay" id="moodOverlay"></div>
-      </section>
+      <!-- LAYOUT: two columns on wide screens, stacks on narrow ones.
+           Left = the pet (habitat + stats + evolution progress).
+           Right = getting things done (add task + the active to-do list). -->
+      <div class="layout">
+        <!-- ===== LEFT: the pet ===== -->
+        <aside class="pet-col">
+          <!-- HABITAT: where the pet lives. app.js swaps the SVG inside
+               depending on the pet's current stage and mood. -->
+          <section class="habitat" id="habitat">
+            <div class="pet-stage" id="petStage"></div>
+            <div class="mood-overlay" id="moodOverlay"></div>
+          </section>
 
-      <!-- STATS: hunger, happiness, level/xp, days survived -->
-      <section class="stats">
-        <div class="stat">
-          <label>Hunger</label>
-          <div class="bar"><div class="bar-fill" id="hungerFill"></div></div>
-        </div>
-        <div class="stat">
-          <label>Happiness</label>
-          <div class="bar"><div class="bar-fill" id="happinessFill"></div></div>
-        </div>
-        <div class="meta">
-          <span>Stage: <strong id="stageLabel">Egg</strong></span>
-          <span>XP: <strong id="xpLabel">0</strong></span>
-          <span>Weekdays survived: <strong id="daysLabel">0</strong></span>
-        </div>
-      </section>
+          <!-- STATS: hunger, happiness, level/xp, days survived -->
+          <section class="stats">
+            <div class="stat">
+              <label>Hunger</label>
+              <div class="bar"><div class="bar-fill" id="hungerFill"></div></div>
+            </div>
+            <div class="stat">
+              <label>Happiness</label>
+              <div class="bar"><div class="bar-fill" id="happinessFill"></div></div>
+            </div>
+            <div class="meta">
+              <span>Stage: <strong id="stageLabel">Egg</strong></span>
+              <span>XP: <strong id="xpLabel">0</strong></span>
+              <span>Weekdays survived: <strong id="daysLabel">0</strong></span>
+            </div>
 
-      <!-- ADD TASK: the input + the three difficulty buttons -->
-      <section class="add-task">
-        <input
-          id="taskInput"
-          type="text"
-          placeholder="What do you need to do?"
-          maxlength="120"
-        />
-        <div class="difficulty-row">
-          <button class="diff-btn normal" data-xp="5">+ Normal (5 XP)</button>
-          <button class="diff-btn medium" data-xp="10">+ Medium (10 XP)</button>
-          <button class="diff-btn hard" data-xp="20">+ Hard (20 XP)</button>
+            <!-- EVOLUTION PROGRESS: how close to the next stage -->
+            <p class="evo-progress" id="evoProgress"></p>
+          </section>
+        </aside>
+
+        <!-- ===== RIGHT: get things done ===== -->
+        <section class="task-col">
+          <!-- ADD TASK: the input + the three difficulty buttons -->
+          <section class="add-task">
+            <input
+              id="taskInput"
+              type="text"
+              placeholder="What do you need to do?"
+              maxlength="120"
+            />
+            <div class="difficulty-row">
+              <button class="diff-btn normal" data-xp="5">+ Normal (5 XP)</button>
+              <button class="diff-btn medium" data-xp="10">+ Medium (10 XP)</button>
+              <button class="diff-btn hard" data-xp="20">+ Hard (20 XP)</button>
+            </div>
+          </section>
+
+          <!-- TODO LIST: active (not-yet-done) tasks only -->
+          <section class="todos">
+            <h2 class="section-title">To do <span class="count" id="todoCount">0</span></h2>
+            <ul id="todoList"></ul>
+            <p id="emptyMsg" class="empty">No tasks yet. Add one above to feed your pet.</p>
+          </section>
+        </section>
+      </div>
+
+      <!-- COMPLETED: its own full-width list, laid out as a grid so it
+           spreads across the page instead of hiding in a corner. -->
+      <section class="completed-section">
+        <div class="completed-head">
+          <h2 class="section-title">Completed <span class="count" id="doneCount">0</span></h2>
+          <button id="clearDoneBtn" class="ghost-btn" title="Remove all completed tasks">clear completed</button>
         </div>
+        <ul id="doneList" class="done-grid"></ul>
+        <p id="doneEmptyMsg" class="empty">Finished tasks will collect here.</p>
       </section>
-
-      <!-- TODO LIST: app.js fills this in based on saved state -->
-      <section class="todos">
-        <ul id="todoList"></ul>
-        <p id="emptyMsg" class="empty">No tasks yet. Add one above to feed your pet.</p>
-      </section>
-
-      <!-- FOOTER: reset button -->
-      <footer class="footer">
-        <button id="resetBtn" class="ghost-btn danger">reset everything</button>
-      </footer>
     </main>
 
     <!-- DEATH OVERLAY: hidden by default; shown when the pet dies -->
